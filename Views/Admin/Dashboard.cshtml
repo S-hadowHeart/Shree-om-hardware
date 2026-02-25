@@ -1,0 +1,94 @@
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-dashboard">
+    <div class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p>Welcome back, Admin User</p>
+        <a href="/Account/Logout" class="btn-logout">Logout</a>
+    </div>
+
+    <div class="dashboard-nav">
+        <a href="/Admin/Dashboard" class="nav-item active">
+            <span>📊</span> Dashboard
+        </a>
+        <a href="/Admin/Products" class="nav-item">
+            <span>📦</span> Products
+        </a>
+        <a href="/Admin/Orders" class="nav-item">
+            <span>🛒</span> Orders
+        </a>
+        <a href="/Admin/Users" class="nav-item">
+            <span>👥</span> Users
+        </a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #fff3e0;">₹</div>
+            <div class="stat-content">
+                <h3>Total Sales</h3>
+                <p class="stat-value">₹@ViewBag.TotalSales.ToString("N0")</p>
+                <span class="stat-change positive">+12% from last month</span>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #e3f2fd;">🛒</div>
+            <div class="stat-content">
+                <h3>Total Orders</h3>
+                <p class="stat-value">@ViewBag.TotalOrders</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #f3e5f5;">👥</div>
+            <div class="stat-content">
+                <h3>Total Users</h3>
+                <p class="stat-value">@ViewBag.TotalUsers</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon" style="background: #e8f5e9;">📦</div>
+            <div class="stat-content">
+                <h3>Total Products</h3>
+                <p class="stat-value">@ViewBag.TotalProducts</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="content-section">
+            <h2>Recent Orders</h2>
+            <div class="orders-list">
+                @foreach (var order in ViewBag.RecentOrders)
+                {
+                    <div class="order-item">
+                        <div>
+                            <strong>Order @order.OrderNumber</strong>
+                            <p>@order.ItemCount items • ₹@order.TotalAmount</p>
+                        </div>
+                        <span class="status-badge status-@order.Status.ToLower()">@order.Status</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Low Stock Alerts</h2>
+            <div class="stock-alerts">
+                @foreach (var product in ViewBag.LowStockProducts)
+                {
+                    <div class="stock-item">
+                        <strong>@product.Name</strong>
+                        <p>Only @product.Stock units left</p>
+                        <button class="btn-reorder">Reorder</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

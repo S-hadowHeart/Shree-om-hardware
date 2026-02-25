@@ -1,0 +1,88 @@
+@model shree_om.Models.Product
+@{
+    ViewData["Title"] = "Add New Product";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-form">
+    <div class="breadcrumb">
+        <a href="/Admin/Products">Products</a> / <span>Add New</span>
+    </div>
+
+    <h1>Add New Product</h1>
+
+    <form method="post" action="/Admin/AddProduct">
+        <div class="form-row">
+            <div class="form-group">
+                <label>Product Name</label>
+                <input type="text" name="Name" required>
+            </div>
+            <div class="form-group">
+                <label>SKU</label>
+                <input type="text" name="Sku" placeholder="SH-DH-001">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Category</label>
+                <select name="CategoryId" required>
+                    <option value="">Select Category</option>
+                    @foreach (var cat in ViewBag.Categories)
+                    {
+                        <option value="@cat.Id">@cat.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Stock</label>
+                <input type="number" name="Stock" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Price (₹)</label>
+                <input type="number" name="Price" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label>Sale Price (₹) <span>(Optional)</span></label>
+                <input type="number" name="OriginalPrice" step="0.01">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Image URL</label>
+            <div class="image-input">
+                <input type="text" name="ImageUrl" placeholder="https://example.com/image.jpg">
+                <button type="button" class="btn-select">Select</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Short Description</label>
+            <input type="text" name="ShortDescription">
+        </div>
+
+        <div class="form-group">
+            <label>Full Description</label>
+            <textarea name="Description" rows="4"></textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Material</label>
+                <input type="text" name="Material">
+            </div>
+            <div class="form-group">
+                <label>Finish</label>
+                <input type="text" name="Finish">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="/Admin/Products" class="btn-cancel">Cancel</a>
+            <button type="submit" class="btn-primary">Create Product</button>
+        </div>
+    </form>
+</div>

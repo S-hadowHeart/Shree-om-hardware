@@ -1,0 +1,115 @@
+@model IEnumerable<shree_om.Models.Order>
+@{
+    ViewData["Title"] = "Order Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-orders">
+    <div class="page-header">
+        <div>
+            <h1>Order Management</h1>
+            <p>Manage customer orders and track fulfillment status.</p>
+        </div>
+        <button class="btn-export">📥 Export Orders</button>
+    </div>
+
+    <div class="order-filters">
+        <a href="/Admin/Orders?status=All" class="filter-tab @(ViewBag.SelectedStatus == "All" ? "active" : "")">
+            All (@Model.Count())
+        </a>
+        <a href="/Admin/Orders?status=Pending" class="filter-tab @(ViewBag.SelectedStatus == "Pending" ? "active" : "")">
+            Pending (@Model.Count(o => o.Status == "Pending"))
+        </a>
+        <a href="/Admin/Orders?status=Processing" class="filter-tab @(ViewBag.SelectedStatus == "Processing" ? "active" : "")">
+            Processing (@Model.Count(o => o.Status == "Processing"))
+        </a>
+        <a href="/Admin/Orders?status=Shipped" class="filter-tab @(ViewBag.SelectedStatus == "Shipped" ? "active" : "")">
+            Shipped (@Model.Count(o => o.Status == "Shipped"))
+        </a>
+        <a href="/Admin/Orders?status=Delivered" class="filter-tab @(ViewBag.SelectedStatus == "Delivered" ? "active" : "")">
+            Delivered (@Model.Count(o => o.Status == "Delivered"))
+        </a>
+    </div>
+
+    <div class="orders-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>ORDER #</th>
+                    <th>CUSTOMER</th>
+                    <th>DATE</th>
+                    <th>ITEMS</th>
+                    <th>TOTAL</th>
+                    <th>STATUS</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.OrderNumber</td>
+                        <td>@order.CustomerName</td>
+                        <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                        <td>@order.ItemCount</td>
+                        <td>₹@order.TotalAmount</td>
+                        <td>
+                            <select class="status-dropdown" onchange="updateStatus(@order.Id, this.value)">
+                                @if (order.Status == "Pending")
+                                {
+                                    <option value="Pending" selected>Pending</option>
+                                }
+                                else
+                                {
+                                    <option value="Pending">Pending</option>
+                                }
+                                @if (order.Status == "Processing")
+                                {
+                                    <option value="Processing" selected>Processing</option>
+                                }
+                                else
+                                {
+                                    <option value="Processing">Processing</option>
+                                }
+                                @if (order.Status == "Shipped")
+                                {
+                                    <option value="Shipped" selected>Shipped</option>
+                                }
+                                else
+                                {
+                                    <option value="Shipped">Shipped</option>
+                                }
+                                @if (order.Status == "Delivered")
+                                {
+                                    <option value="Delivered" selected>Delivered</option>
+                                }
+                                else
+                                {
+                                    <option value="Delivered">Delivered</option>
+                                }
+                            </select>
+                        </td>
+                        <td class="actions">
+                            <button class="btn-icon">👁️</button>
+                            <button class="btn-icon">📥</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="back-link">
+        <a href="/Admin/Dashboard">← Back to Dashboard</a>
+    </div>
+</div>
+
+<script>
+function updateStatus(orderId, status) {
+    fetch('/Admin/UpdateOrderStatus', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `id=${orderId}&status=${status}`
+    }).then(() => location.reload());
+}
+</script>
