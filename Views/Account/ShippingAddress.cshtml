@@ -1,0 +1,78 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewData["Title"] = "Shipping Address";
+    Layout = "_Layout";
+}
+
+<div class="max-w-3xl mx-auto">
+
+    <h1 class="text-2xl font-bold text-slate-800 mb-6">
+        Shipping Address
+    </h1>
+
+    <div class="bg-white shadow-sm rounded-lg p-6">
+
+      @*   @if (ViewBag.Success != null)
+        {
+            <div class="bg-green-100 text-green-600 p-2 rounded mb-4">
+                @ViewBag.Success
+            </div>
+        } *@
+
+        <form method="post">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <div>
+                    <label class="text-sm text-gray-600">Full Name</label>
+                    <input type="text" name="fullName"
+                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-600">Phone Number</label>
+                    <input type="text" name="phone"
+                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="text-sm text-gray-600">Address</label>
+                    <input type="text" name="address"
+                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-600">City</label>
+                    <input type="text" name="city"
+                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-600">State</label>
+                    <input type="text" name="state"
+                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
+                </div>
+
+                <div>
+                    <label class="text-sm text-gray-600">Pincode</label>
+                    <input type="text" name="pincode"
+                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
+                </div>
+
+            </div>
+
+            <div class="mt-6">
+                <button type="submit"
+                        class="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600">
+                    Save Address
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
