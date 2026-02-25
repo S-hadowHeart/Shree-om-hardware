@@ -12,6 +12,7 @@ namespace shree_om.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<ContactMessage> ContactMessages { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +37,17 @@ namespace shree_om.Data
                 new Product { Id = 6, Name = "Heavy Duty Hinge Set (Pack of 2)", Description = "Industrial-grade hinges. Corrosion-resistant. Sold as a pack of 2.", Price = 599, OriginalPrice = 599, ImageUrl = "/images/hinge-set.jpg", Stock = 1236, Rating = 4.6m, ReviewCount = 421, IsFeatured = true, DiscountPercent = 0, CategoryId = 3, CreatedAt = new DateTime(2026,1,1) },
                 new Product { Id = 7, Name = "Main Door Handle SMD-1012", Description = "Premium main door handle with multiple size and finish options. Ergonomic grip design.", Price = 749, OriginalPrice = 899, ImageUrl = "/images/handle-smd.jpg", Stock = 480, Rating = 4.3m, ReviewCount = 87, IsFeatured = false, DiscountPercent = 11, CategoryId = 1, CreatedAt = new DateTime(2026,1,1) },
                 new Product { Id = 8, Name = "Premium Main Door Handle SMD-1007", Description = "Premium main door handle with multiple variants. Crafted for modern aesthetics and long-lasting durability.", Price = 799, OriginalPrice = 899, ImageUrl = "/images/handle-smd2.jpg", Stock = 480, Rating = 4.5m, ReviewCount = 198, IsFeatured = false, DiscountPercent = 11, CategoryId = 1, CreatedAt = new DateTime(2026,1,1) }
+            );
+
+            // Seed orders
+            modelBuilder.Entity<Order>().HasData(
+                new Order { Id = 1, OrderNumber = "ORD-2025-PUD268CBO", CustomerName = "yashimakwana2275", OrderDate = new DateTime(2026,2,15), ItemCount = 1, TotalAmount = 1061, Status = "Pending" },
+                new Order { Id = 2, OrderNumber = "ORD-2025-EZ6XZAXH2", CustomerName = "yashimakwana2275", OrderDate = new DateTime(2026,2,13), ItemCount = 1, TotalAmount = 1475, Status = "Pending" },
+                new Order { Id = 3, OrderNumber = "ORD-001", CustomerName = "Rajesh Kumar", OrderDate = new DateTime(2025,2,12), ItemCount = 2, TotalAmount = 3597, Status = "Delivered" },
+                new Order { Id = 4, OrderNumber = "ORD-002", CustomerName = "Priya Sharma", OrderDate = new DateTime(2025,2,11), ItemCount = 2, TotalAmount = 2250, Status = "Shipped" },
+                new Order { Id = 5, OrderNumber = "ORD-003", CustomerName = "Amit Patel", OrderDate = new DateTime(2025,2,10), ItemCount = 1, TotalAmount = 899, Status = "Processing" },
+                new Order { Id = 6, OrderNumber = "ORD-004", CustomerName = "Suresh Kumar", OrderDate = new DateTime(2025,2,9), ItemCount = 3, TotalAmount = 4580, Status = "Pending" },
+                new Order { Id = 7, OrderNumber = "ORD-005", CustomerName = "Neha Gupta", OrderDate = new DateTime(2025,2,8), ItemCount = 1, TotalAmount = 1798, Status = "Delivered" }
             );
         }
     }

@@ -1,0 +1,56 @@
+@model IEnumerable<shree_om.Models.Product>
+@{
+    ViewData["Title"] = "Product Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-products">
+    <div class="page-header">
+        <div>
+            <h1>Product Management</h1>
+            <p>Manage your product inventory</p>
+        </div>
+        <a href="/Admin/AddProduct" class="btn-primary">+ Add Product</a>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" placeholder="Search products..." id="searchProducts">
+    </div>
+
+    <div class="products-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td><img src="@product.ImageUrl" alt="@product.Name" class="product-thumb"></td>
+                        <td>@product.Name</td>
+                        <td>@product.Category?.Name</td>
+                        <td>₹@product.Price</td>
+                        <td>@product.Stock</td>
+                        <td class="actions">
+                            <a href="/Admin/EditProduct/@product.Id" class="btn-edit">✏️</a>
+                            <form method="post" action="/Admin/DeleteProduct/@product.Id" style="display:inline;">
+                                <button type="submit" class="btn-delete" onclick="return confirm('Delete this product?')">🗑️</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="back-link">
+        <a href="/Admin/Dashboard">← Back to Dashboard</a>
+    </div>
+</div>

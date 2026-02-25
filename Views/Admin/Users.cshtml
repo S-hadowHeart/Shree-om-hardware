@@ -1,0 +1,69 @@
+@model IEnumerable<shree_om.Models.User>
+@{
+    ViewData["Title"] = "User Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="admin-users">
+    <div class="page-header">
+        <div>
+            <h1>User Management</h1>
+            <p>Manage customer accounts and access levels.</p>
+        </div>
+        <a href="/Admin/AddUser" class="btn-primary">+ Add User</a>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" placeholder="Search by name, email, or phone..." id="searchUsers">
+    </div>
+
+    <div class="users-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>EMAIL</th>
+                    <th>PHONE</th>
+                    <th>ROLE</th>
+                    <th>STATUS</th>
+                    <th>VERIFIED</th>
+                    <th>JOINED</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.FullName</td>
+                        <td>@user.Email</td>
+                        <td>@user.PhoneNumber</td>
+                        <td><span class="role-badge role-@user.Role.ToLower()">@user.Role.ToUpper()</span></td>
+                        <td><span class="status-badge status-active">ACTIVE</span></td>
+                        <td>✅</td>
+                        <td>@user.CreatedAt.ToString("M/d/yyyy")</td>
+                        <td class="actions">
+                            <a href="/Admin/EditUser/@user.Id" class="btn-icon">✏️</a>
+                            <a href="#" class="btn-icon">👁️</a>
+                            <form method="post" action="/Admin/DeleteUser/@user.Id" style="display:inline;">
+                                <button type="submit" class="btn-icon" onclick="return confirm('Delete this user?')">🗑️</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination">
+        <span>Showing 1 of 1 users</span>
+        <div>
+            <button disabled>Previous</button>
+            <button disabled>Next</button>
+        </div>
+    </div>
+
+    <div class="back-link">
+        <a href="/Admin/Dashboard">← Back to Dashboard</a>
+    </div>
+</div>
