@@ -1,0 +1,109 @@
+@{
+    ViewData["Title"] = "About Us – Shree Om Hardware";
+}
+
+<!-- Hero Banner -->
+<section style="background:var(--navy); padding:64px 32px; text-align:center; color:white;">
+    <div class="container">
+        <h1 style="font-size:32px; font-weight:800; margin-bottom:10px;">About Shree Om Hardware</h1>
+        <p style="color:#A0AEC0; font-size:16px;">Manufacturing Excellence Since 2010</p>
+    </div>
+</section>
+
+<!-- Our Story -->
+<section class="section">
+    <div class="container">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;">
+            <div>
+                <h2 style="font-size:22px; font-weight:700; margin-bottom:18px;">Our Story</h2>
+                <p style="color:var(--text-grey); font-size:14px; line-height:1.8; margin-bottom:14px;">
+                    Shree Om Hardware was founded in 2010 with a vision to provide high-quality hardware products to homes and businesses across India. What started as a small manufacturing unit in Rajkot, Gujarat, has now grown into one of the leading hardware manufacturers in the country.
+                </p>
+                <p style="color:var(--text-grey); font-size:14px; line-height:1.8; margin-bottom:14px;">
+                    We specialize in manufacturing door handles, locks, hinges, tower bolts, and various hardware accessories using premium materials like stainless steel, brass, and aluminum alloy.
+                </p>
+                <p style="color:var(--text-grey); font-size:14px; line-height:1.8;">
+                    Our commitment to quality, innovation, and customer satisfaction has helped us build a strong reputation in the industry. Today, we serve thousands of customers across India, from individual homeowners to large construction projects.
+                </p>
+            </div>
+            <div style="border-radius:12px; overflow:hidden; background:#F3F4F6; min-height:280px; display:flex; align-items:center; justify-content:center;">
+                <div style="text-align:center; padding:40px; color:var(--text-grey);">
+                    <i class="fa-solid fa-industry" style="font-size:64px; color:var(--orange); margin-bottom:16px; display:block;"></i>
+                    <span style="font-size:14px;">Manufacturing Unit – Rajkot, Gujarat</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mission & Vision -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:56px;">
+            <div>
+                <div style="width:52px; height:52px; background:var(--orange-light); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
+                    <i class="fa-solid fa-bullseye" style="color:var(--orange); font-size:20px;"></i>
+                </div>
+                <h3 style="font-weight:700; margin-bottom:10px;">Our Mission</h3>
+                <p style="color:var(--text-grey); font-size:14px; line-height:1.7;">
+                    To manufacture and deliver world-class hardware products that combine superior quality, innovative design, and affordability. We aim to be the first choice for customers seeking reliable and durable hardware solutions.
+                </p>
+            </div>
+            <div>
+                <div style="width:52px; height:52px; background:var(--orange-light); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
+                    <i class="fa-solid fa-eye" style="color:var(--orange); font-size:20px;"></i>
+                </div>
+                <h3 style="font-weight:700; margin-bottom:10px;">Our Vision</h3>
+                <p style="color:var(--text-grey); font-size:14px; line-height:1.7;">
+                    To become India's most trusted hardware brand by continuously innovating our products, expanding our reach, and maintaining the highest standards of quality. We envision a future where every home and business can access premium hardware at competitive prices.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Manufacturing Excellence -->
+<section class="section section-alt">
+    <div class="container">
+        <h2 class="section-title">Manufacturing Excellence</h2>
+        <div class="features-grid" style="margin-top:40px;">
+            <div class="feature-item">
+                <div class="icon-wrap"><i class="fa-solid fa-pencil-ruler"></i></div>
+                <h3>Design</h3>
+                <p>Modern CAD-based design process</p>
+            </div>
+            <div class="feature-item">
+                <div class="icon-wrap"><i class="fa-solid fa-industry"></i></div>
+                <h3>Production</h3>
+                <p>State-of-the-art manufacturing</p>
+            </div>
+            <div class="feature-item">
+                <div class="icon-wrap"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                <h3>Quality Check</h3>
+                <p>Rigorous quality control</p>
+            </div>
+            <div class="feature-item">
+                <div class="icon-wrap"><i class="fa-solid fa-truck-fast"></i></div>
+                <h3>Delivery</h3>
+                <p>Nationwide distribution</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Certifications & Quality -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Certifications &amp; Quality</h2>
+        <div style="display:flex; gap:32px; justify-content:center; margin-top:40px; flex-wrap:wrap;">
+            @foreach (var cert in new[] { ("ISO 9001:2015", "Quality Management"), ("Made in India", "100% Indian Manufacturing"), ("BIS Certified", "Bureau of Indian Standards") })
+            {
+                <div style="text-align:center; padding:32px 40px; border:1px solid var(--border); border-radius:12px; min-width:160px;">
+                    <div style="width:52px; height:52px; background:var(--orange-light); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 14px;">
+                        <i class="fa-solid fa-certificate" style="color:var(--orange); font-size:20px;"></i>
+                    </div>
+                    <div style="font-weight:700; font-size:14px; margin-bottom:4px;">@cert.Item1</div>
+                    <div style="font-size:12px; color:var(--text-grey);">@cert.Item2</div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

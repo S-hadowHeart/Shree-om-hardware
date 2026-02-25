@@ -1,0 +1,155 @@
+﻿@model List<shree_om.Models.Product>
+
+@{
+    ViewData["Title"] = "Home – Premium Hardware Parts Made in India";
+}
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1>Premium Hardware Parts<br/>Made in India <span class="flag">🇮🇳</span></h1>
+        <p>Manufacturing high-quality door handles, locks, hinges, and hardware accessories since 2010</p>
+        <div class="hero-btns">
+            <a href="#" class="btn-orange">Shop Now</a>
+            <a href="#" class="btn-outline">Contact Us</a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title" style="text-align:left; margin-bottom:0;">Featured Products</h2>
+            <a href="#" class="view-all">View All</a>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="products-grid">
+                @foreach (var product in Model)
+                {
+                    <div class="product-card">
+                        @if (product.DiscountPercent > 0)
+                        {
+                            <span class="badge">@product.DiscountPercent% OFF</span>
+                        }
+                        <div class="product-img">
+                            <img src="@product.ImageUrl" alt="@product.Name" onerror="this.parentElement.innerHTML='<span style=padding:20px;font-size:12px;color:#9CA3AF>No Image</span>'" />
+                        </div>
+                        <div class="card-body">
+                            <div class="sku">SKU: SO-@product.Id.ToString("D5")</div>
+                            <div class="name">@product.Name</div>
+                            <div class="rating">
+                                <span class="stars">
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= (int)product.Rating)
+                                        {
+                                            <i class="fa-solid fa-star"></i>
+                                        }
+                                        else if (i - product.Rating < 1)
+                                        {
+                                            <i class="fa-regular fa-star-half-stroke"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa-regular fa-star"></i>
+                                        }
+                                    }
+                                </span>
+                                <span>@product.Rating (@product.ReviewCount reviews)</span>
+                            </div>
+                            <div class="pricing">
+                                <span class="price">₹@product.Price.ToString("N0")</span>
+                                @if (product.OriginalPrice > product.Price)
+                                {
+                                    <span class="orig-price">₹@product.OriginalPrice.ToString("N0")</span>
+                                }
+                            </div>
+                            <div class="stock"><i class="fa-solid fa-circle-check" style="margin-right:4px;"></i>In Stock (@product.Stock units)</div>
+                            <button class="add-cart">Add to cart</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p style="text-align:center; color:var(--text-grey); padding:40px 0;">No featured products available.</p>
+        }
+    </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- Why Choose Us -->
+<section class="section section-alt">
+    <div class="container">
+        <h2 class="section-title">Why Choose Shree Om Hardware</h2>
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="icon-wrap"><i class="fa-solid fa-shield-halved"></i></div>
+                <h3>Quality Manufacturing</h3>
+                <p>Premium materials and precision engineering</p>
+            </div>
+            <div class="feature-item">
+                <div class="icon-wrap"><i class="fa-solid fa-truck-fast"></i></div>
+                <h3>Nationwide Shipping</h3>
+                <p>Free shipping on orders above ₹500</p>
+            </div>
+            <div class="feature-item">
+                <div class="icon-wrap"><i class="fa-solid fa-certificate"></i></div>
+                <h3>Warranty</h3>
+                <p>7–3 years warranty on all products</p>
+            </div>
+            <div class="feature-item">
+                <div class="icon-wrap"><i class="fa-solid fa-headset"></i></div>
+                <h3>24/7 Support</h3>
+                <p>Always here to help you</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">What Our Customers Say</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="quote">"Excellent quality products! The door handles are sturdy and look premium. Very happy with my purchase."</p>
+                <div class="author">
+                    <div class="avatar">RK</div>
+                    <div class="info">
+                        <div class="name">Rajesh Kumar</div>
+                        <div class="loc">Ahmedabad</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                <p class="quote">"Best hardware shop online. Fast delivery and great customer service. Highly recommended!"</p>
+                <div class="author">
+                    <div class="avatar">PS</div>
+                    <div class="info">
+                        <div class="name">Priya Sharma</div>
+                        <div class="loc">Mumbai</div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
+                <p class="quote">"Premium quality at affordable prices. The locks are very secure. Will definitely order again."</p>
+                <div class="author">
+                    <div class="avatar">AP</div>
+                    <div class="info">
+                        <div class="name">Amit Patel</div>
+                        <div class="loc">Rajkot</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

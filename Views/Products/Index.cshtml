@@ -1,0 +1,196 @@
+@model shree_om.Models.ViewModels.ProductFilterViewModel
+
+@{
+    ViewData["Title"] = "Products – Shree Om Hardware";
+}
+
+<style>
+    /* Products page specific */
+    .products-page { display:grid; grid-template-columns:220px 1fr; gap:28px; padding:28px 32px; max-width:1200px; margin:0 auto; }
+    .breadcrumb { padding:14px 32px; font-size:13px; color:var(--text-grey); max-width:1200px; margin:0 auto; }
+    .breadcrumb a { color:var(--text-grey); } .breadcrumb a:hover { color:var(--orange); }
+    .breadcrumb span { margin:0 6px; }
+    /* Sidebar */
+    .filter-sidebar { background:white; border:1px solid var(--border); border-radius:12px; padding:20px; height:fit-content; }
+    .filter-section { margin-bottom:22px; padding-bottom:22px; border-bottom:1px solid var(--border); }
+    .filter-section:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+    .filter-section h4 { font-size:13px; font-weight:700; margin-bottom:12px; color:var(--text-dark); }
+    .filter-check { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; font-size:13px; cursor:pointer; }
+    .filter-check label { display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--text-dark); }
+    .filter-check input[type="checkbox"] { accent-color:var(--orange); width:15px; height:15px; cursor:pointer; }
+    .filter-check .count { color:var(--text-grey); font-size:12px; }
+    .price-range input[type="range"] { width:100%; accent-color:var(--orange); margin:8px 0; }
+    .price-range .price-labels { display:flex; justify-content:space-between; font-size:12px; color:var(--text-grey); }
+    .filter-select { width:100%; padding:8px 10px; border:1px solid var(--border); border-radius:6px; font-size:13px; font-family:inherit; accent-color:var(--orange); outline:none; }
+    .btn-clear { width:100%; padding:9px; border:1.5px solid var(--border); border-radius:6px; font-size:13px; font-family:inherit; cursor:pointer; background:white; color:var(--text-dark); transition:border-color .2s; }
+    .btn-clear:hover { border-color:var(--orange); color:var(--orange); }
+    /* Products grid area */
+    .products-area {}
+    .products-toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+    .products-toolbar .showing { font-size:13px; color:var(--text-grey); }
+    .toolbar-right { display:flex; align-items:center; gap:10px; }
+    .sort-select { padding:8px 14px; border:1px solid var(--border); border-radius:6px; font-size:13px; font-family:inherit; outline:none; }
+    .view-toggle button { width:34px; height:34px; border:1px solid var(--border); border-radius:6px; background:white; cursor:pointer; font-size:14px; display:inline-flex; align-items:center; justify-content:center; color:var(--text-grey); transition:all .2s; }
+    .view-toggle button.active, .view-toggle button:hover { border-color:var(--orange); color:var(--orange); background:var(--orange-light); }
+    .prod-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+    @@media(max-width:960px) { .products-page { grid-template-columns:1fr; } .prod-grid { grid-template-columns:repeat(2,1fr); } }
+    @@media(max-width:540px) { .prod-grid { grid-template-columns:1fr; } }
+</style>
+
+<!-- Breadcrumb -->
+<nav class="breadcrumb">
+    <a asp-controller="Home" asp-action="Index">Home</a>
+    <span>&rsaquo;</span>
+    <strong>Products</strong>
+</nav>
+
+<div class="products-page">
+    <!-- Sidebar Filters -->
+    <aside class="filter-sidebar">
+        <form method="get" asp-action="Index" asp-controller="Products" id="filterForm">
+            <h3 style="font-size:16px; font-weight:700; margin-bottom:18px;">Filters</h3>
+
+            <!-- Categories -->
+            <div class="filter-section">
+                <h4>Categories</h4>
+                @foreach (var cat in Model.Categories)
+                {
+                    <div class="filter-check">
+                        <label>
+                            <input type="checkbox" name="categoryId" value="@cat.Id" @(Model.CategoryId == cat.Id ? "checked" : "") onchange="document.getElementById('filterForm').submit()" />
+                            @cat.Name
+                        </label>
+                    </div>
+                }
+            </div>
+
+            <!-- Price Range -->
+            <div class="filter-section">
+                <h4>Price Range</h4>
+                <div class="price-range">
+                    <input type="range" name="maxPrice" min="0" max="5000" step="100"
+                           value="@(Model.MaxPrice ?? 5000)"
+                           oninput="document.getElementById('priceVal').textContent=this.value"
+                           onchange="document.getElementById('filterForm').submit()" />
+                    <div class="price-labels">
+                        <span>₹0</span>
+                        <span id="priceVal">@(Model.MaxPrice ?? 5000)</span>
+                        <span>₹5000</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sort (hidden, controlled by toolbar) -->
+            <input type="hidden" name="sort" value="@Model.Sort" id="sortInput" />
+
+            <!-- Clear -->
+            <button type="button" class="btn-clear" onclick="window.location='/Products'">Clear All Filters</button>
+        </form>
+    </aside>
+
+    <!-- Products Area -->
+    <div class="products-area">
+        <!-- Toolbar -->
+        <div class="products-toolbar">
+            <span class="showing">Showing @Model.TotalCount products</span>
+            <div class="toolbar-right">
+                @{
+                    var sortVal = Model.Sort ?? "";
+                    var sortOptions = new[]
+                    {
+                        ("", "Featured"),
+                        ("price_asc", "Price: Low to High"),
+                        ("price_desc", "Price: High to Low"),
+                        ("rating", "Top Rated"),
+                        ("newest", "Newest")
+                    };
+                    var selectHtml = "<select class=\"sort-select\" onchange=\"setSortAndSubmit(this.value)\">";
+                    foreach (var (val, label) in sortOptions)
+                        selectHtml += $"<option value=\"{val}\"{(sortVal == val ? " selected" : "")}>{label}</option>";
+                    selectHtml += "</select>";
+                }
+                @Html.Raw(selectHtml)
+                <div class="view-toggle">
+                    <button type="button" class="active" id="gridViewBtn" onclick="setView('grid')"><i class="fa-solid fa-grip"></i></button>
+                    <button type="button" id="listViewBtn" onclick="setView('list')"><i class="fa-solid fa-list"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        @if (Model.Products.Any())
+        {
+            <div class="prod-grid" id="productGrid">
+                @foreach (var p in Model.Products)
+                {
+                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@p.Id" style="text-decoration:none; color:inherit;">
+                        <div class="product-card" style="cursor:pointer;">
+                            @if (p.DiscountPercent > 0)
+                            {
+                                <span class="badge">@p.DiscountPercent% OFF</span>
+                            }
+                            <div class="product-img" style="height:200px; background:#F3F4F6; display:flex; align-items:center; justify-content:center;">
+                                <i class="fa-solid fa-screwdriver-wrench" style="font-size:48px; color:#D1D5DB;"></i>
+                            </div>
+                            <div class="card-body">
+                                <div class="sku">SKU: SH-@p.CategoryId.ToString("D2")-@p.Id.ToString("D3")</div>
+                                <div class="name" style="min-height:38px;">@p.Name</div>
+                                <div class="rating">
+                                    <span class="stars">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= (int)p.Rating) { <i class="fa-solid fa-star" style="font-size:11px;"></i> }
+                                            else { <i class="fa-regular fa-star" style="font-size:11px;"></i> }
+                                        }
+                                    </span>
+                                    <span>@p.Rating (@p.ReviewCount reviews)</span>
+                                </div>
+                                <div class="pricing">
+                                    <span class="price">₹@p.Price.ToString("N0")</span>
+                                    @if (p.OriginalPrice > p.Price)
+                                    {
+                                        <span class="orig-price">₹@p.OriginalPrice.ToString("N0")</span>
+                                    }
+                                </div>
+                                <div class="stock"><i class="fa-solid fa-circle-check" style="margin-right:4px;"></i>In Stock (@p.Stock units)</div>
+                                <button class="add-cart" onclick="event.preventDefault(); event.stopPropagation();">
+                                    <i class="fa-solid fa-cart-plus" style="margin-right:6px;"></i>Add to cart
+                                </button>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+        else
+        {
+            <div style="text-align:center; padding:60px 0; color:var(--text-grey);">
+                <i class="fa-solid fa-box-open" style="font-size:48px; margin-bottom:16px; display:block; color:#D1D5DB;"></i>
+                <p style="font-size:16px;">No products match your filters.</p>
+                <a href="/Products" style="color:var(--orange); font-weight:600;">Clear Filters</a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function setSortAndSubmit(val) {
+    document.getElementById('sortInput').value = val;
+    document.getElementById('filterForm').submit();
+}
+function setView(type) {
+    const grid = document.getElementById('productGrid');
+    if (!grid) return;
+    if (type === 'list') {
+        grid.style.gridTemplateColumns = '1fr';
+        document.getElementById('gridViewBtn').classList.remove('active');
+        document.getElementById('listViewBtn').classList.add('active');
+    } else {
+        grid.style.gridTemplateColumns = 'repeat(4,1fr)';
+        document.getElementById('listViewBtn').classList.remove('active');
+        document.getElementById('gridViewBtn').classList.add('active');
+    }
+}
+</script>
+}

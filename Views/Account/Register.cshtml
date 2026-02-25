@@ -1,0 +1,125 @@
+@model shree_om.Models.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Create Account – Shree Om Hardware";
+    Layout = "_Layout";
+}
+
+<style>
+    .pw-strength-wrap { margin-top:8px; }
+    .pw-strength-track {
+        height:5px; background:var(--border); border-radius:4px; overflow:hidden; margin-bottom:4px;
+    }
+    #pwStrengthBar { height:100%; width:0; transition:width .3s, background .3s; border-radius:4px; }
+    #pwStrengthLabel { font-size:11px; color:var(--text-grey); }
+    .requirement { font-size:11px; color:var(--text-grey); margin-top:4px; display:flex; align-items:center; gap:4px; }
+    .requirement.met { color:#16A34A; }
+    .requirement i { font-size:10px; }
+</style>
+
+<div class="auth-page">
+    <div class="auth-card">
+        <!-- Logo -->
+        <div class="auth-logo">
+            <div class="logo-box">SO</div>
+        </div>
+
+        <h2>Create Account</h2>
+        <p class="auth-sub">Join Shree Om Hardware today</p>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert-danger">
+                <i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>
+                <span asp-validation-summary="ModelOnly"></span>
+            </div>
+        }
+
+        <form asp-action="Register" asp-controller="Account" method="post" id="registerForm" novalidate>
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label asp-for="FullName">Full Name</label>
+                <input asp-for="FullName" type="text" id="regFullName" placeholder="Your full name" autocomplete="name" />
+                <span class="text-danger" id="regFullNameErr"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">Email Address</label>
+                <input asp-for="Email" type="email" id="regEmail" placeholder="your@email.com" autocomplete="email" />
+                <span class="text-danger" id="regEmailErr"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PhoneNumber">Phone Number</label>
+                <input asp-for="PhoneNumber" type="tel" id="regPhone" placeholder="+91-XXXXXXXXXX" autocomplete="tel" />
+                <span class="text-danger" id="regPhoneErr"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password">Password</label>
+                <div class="password-wrap">
+                    <input asp-for="Password" type="password" id="regPassword" placeholder="Create a strong password" autocomplete="new-password" />
+                    <button type="button" class="toggle-pw" onclick="togglePw('regPassword', this)" tabindex="-1">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
+                </div>
+                <!-- Password strength bar -->
+                <div class="pw-strength-wrap">
+                    <div class="pw-strength-track"><div id="pwStrengthBar"></div></div>
+                    <span id="pwStrengthLabel"></span>
+                </div>
+                <div class="requirement" id="req-len"><i class="fa-regular fa-circle"></i> At least 6 characters</div>
+                <div class="requirement" id="req-upper"><i class="fa-regular fa-circle"></i> Uppercase letter</div>
+                <div class="requirement" id="req-num"><i class="fa-regular fa-circle"></i> At least one number</div>
+                <span class="text-danger" id="regPasswordErr"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ConfirmPassword">Confirm Password</label>
+                <input asp-for="ConfirmPassword" type="password" id="regConfirmPassword" placeholder="Confirm your password" autocomplete="new-password" />
+                <span class="text-danger" id="regConfirmPasswordErr"></span>
+            </div>
+
+            <div class="form-group" style="margin-bottom:22px;">
+                <label class="form-check">
+                    <input asp-for="AgreeToTerms" id="regTerms" type="checkbox" />
+                    <span>I agree to <a href="#" class="link-orange">Terms &amp; Conditions</a></span>
+                </label>
+                <span class="text-danger" id="regTermsErr"></span>
+            </div>
+
+            <button type="submit" class="btn-orange w-full">Create Account</button>
+        </form>
+
+        <div class="auth-divider">
+            Already have an account? <a asp-controller="Account" asp-action="Login">Login</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+<script>
+// Password requirement live feedback
+document.addEventListener('DOMContentLoaded', function () {
+    const pw = document.getElementById('regPassword');
+    if (!pw) return;
+    pw.addEventListener('input', function () {
+        const v = this.value;
+        setReq('req-len',   v.length >= 6);
+        setReq('req-upper', /[A-Z]/.test(v));
+        setReq('req-num',   /[0-9]/.test(v));
+    });
+    function setReq(id, met) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.toggle('met', met);
+        const icon = el.querySelector('i');
+        if (icon) {
+            icon.className = met ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+        }
+    }
+});
+</script>
+}

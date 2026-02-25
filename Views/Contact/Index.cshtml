@@ -1,0 +1,171 @@
+@model shree_om.Models.ViewModels.ContactViewModel
+
+@{
+    ViewData["Title"] = "Contact Us – Shree Om Hardware";
+}
+
+<style>
+    .contact-hero { background:var(--navy); padding:56px 32px; text-align:center; color:white; }
+    .contact-hero h1 { font-size:32px; font-weight:800; margin-bottom:10px; }
+    .contact-hero p { color:#A0AEC0; }
+    .contact-body { max-width:1200px; margin:0 auto; padding:48px 32px; }
+    .contact-grid { display:grid; grid-template-columns:2fr 1fr; gap:28px; margin-bottom:48px; }
+    .contact-form-card { background:white; border:1px solid var(--border); border-radius:12px; padding:32px; }
+    .contact-form-card h2 { font-size:18px; font-weight:700; margin-bottom:22px; }
+    .form-row-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .contact-info-card { background:white; border:1px solid var(--border); border-radius:12px; padding:32px; height:fit-content; }
+    .contact-info-item { display:flex; align-items:flex-start; gap:14px; margin-bottom:22px; }
+    .contact-info-item .icon { width:40px; height:40px; background:var(--orange-light); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--orange); flex-shrink:0; }
+    .contact-info-item h4 { font-size:14px; font-weight:700; margin-bottom:3px; }
+    .contact-info-item p { font-size:13px; color:var(--text-grey); line-height:1.5; margin:0; }
+    .contact-info-item a { color:var(--orange); }
+    /* FAQ */
+    .faq-card { background:white; border:1px solid var(--border); border-radius:12px; padding:28px; }
+    .faq-card h2 { font-size:20px; font-weight:700; margin-bottom:18px; }
+    .faq-item { border-top:1px solid var(--border); }
+    .faq-item:first-of-type { border-top:none; }
+    .faq-question { display:flex; justify-content:space-between; align-items:center; padding:16px 4px; cursor:pointer; font-size:14px; font-weight:500; color:var(--text-dark); user-select:none; }
+    .faq-question:hover { color:var(--orange); }
+    .faq-question .faq-icon { transition:transform .3s; font-size:12px; color:var(--text-grey); }
+    .faq-question.open .faq-icon { transform:rotate(180deg); }
+    .faq-answer { display:none; padding:0 4px 16px; font-size:13px; color:var(--text-grey); line-height:1.7; }
+    .faq-answer.open { display:block; }
+    @@media(max-width:768px) { .contact-grid { grid-template-columns:1fr; } .form-row-2 { grid-template-columns:1fr; } }
+</style>
+
+<!-- Hero -->
+<div class="contact-hero">
+    <h1>Contact Us</h1>
+    <p>We'd love to hear from you</p>
+</div>
+
+<div class="contact-body">
+    <!-- Success Message -->
+    @if (TempData["ContactSuccess"] != null)
+    {
+        <div class="alert-success" style="margin-bottom:24px;">
+            <i class="fa-solid fa-circle-check" style="margin-right:8px;"></i>@TempData["ContactSuccess"]
+        </div>
+    }
+
+    <div class="contact-grid">
+        <!-- Form -->
+        <div class="contact-form-card">
+            <h2>Send us a Message</h2>
+            <form asp-action="Index" asp-controller="Contact" method="post" id="contactForm" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label asp-for="FullName">Full Name <span style="color:red;">*</span></label>
+                    <input asp-for="FullName" type="text" id="cf-name" placeholder="Your full name" />
+                    <span asp-validation-for="FullName" class="text-danger" id="cf-name-err"></span>
+                </div>
+
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label asp-for="Email">Email <span style="color:red;">*</span></label>
+                        <input asp-for="Email" type="email" id="cf-email" placeholder="your@email.com" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Phone">Phone <span style="color:red;">*</span></label>
+                        <input asp-for="Phone" type="tel" id="cf-phone" placeholder="+91-XXXXXXXXXX" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Subject">Subject <span style="color:red;">*</span></label>
+                    <input asp-for="Subject" type="text" id="cf-subject" placeholder="How can we help you?" />
+                    <span asp-validation-for="Subject" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Message">Message <span style="color:red;">*</span></label>
+                    <textarea asp-for="Message" id="cf-msg" rows="5" placeholder="Write your message..."
+                        style="width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:6px; font-size:14px; font-family:inherit; resize:vertical; outline:none; transition:border-color .2s; color:var(--text-dark);"
+                        onfocus="this.style.borderColor='var(--orange)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+                    <span asp-validation-for="Message" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn-orange" style="padding:12px 32px;">
+                    <i class="fa-solid fa-paper-plane" style="margin-right:8px;"></i>Send Message
+                </button>
+            </form>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="contact-info-card">
+            <div class="contact-info-item">
+                <div class="icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div>
+                    <h4>Address</h4>
+                    <p>123, Industrial Area<br/>Rajkot, Gujarat – 360001<br/>India</p>
+                </div>
+            </div>
+            <div class="contact-info-item">
+                <div class="icon"><i class="fa-solid fa-phone"></i></div>
+                <div>
+                    <h4>Phone</h4>
+                    <p><a href="tel:+919876543210">+91-98765-43210</a></p>
+                </div>
+            </div>
+            <div class="contact-info-item">
+                <div class="icon"><i class="fa-solid fa-envelope"></i></div>
+                <div>
+                    <h4>Email</h4>
+                    <p><a href="mailto:info@shreeomhardware.com">info@shreeomhardware.com</a></p>
+                </div>
+            </div>
+            <div class="contact-info-item">
+                <div class="icon"><i class="fa-solid fa-clock"></i></div>
+                <div>
+                    <h4>Business Hours</h4>
+                    <p>Monday – Saturday<br/>9:00 AM – 6:00 PM</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div class="faq-card">
+        <h2>Frequently Asked Questions</h2>
+        @{
+            var faqs = new[]
+            {
+                ("What is the minimum order quantity?", "There is no minimum order quantity for individual customers. For bulk or dealer orders, the minimum quantity varies by product. Contact us for bulk pricing."),
+                ("Do you ship pan-India?", "Yes, we ship to all states and union territories across India. Free shipping is available on orders above ₹500. For remote areas, additional charges may apply."),
+                ("What is the warranty period?", "All our products come with a standard 3-year warranty against manufacturing defects. Some premium products carry a 5-year warranty. Warranty details are mentioned on each product page."),
+                ("How do I become a dealer?", "We welcome authorized dealers across India. Please fill out the contact form with Subject 'Dealer Inquiry' or email us at info@shreeomhardware.com with your business details."),
+                ("What payment methods do you accept?", "We accept UPI, Credit/Debit Cards, Net Banking, and Cash on Delivery for eligible orders. For bulk orders, NEFT/RTGS transfers are also accepted.")
+            };
+        }
+        @foreach (var (q, a) in faqs)
+        {
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    <span>@q</span>
+                    <i class="fa-solid fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">@a</div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+<script>
+function toggleFaq(el) {
+    const answer = el.nextElementSibling;
+    const isOpen = answer.classList.contains('open');
+    // Close all
+    document.querySelectorAll('.faq-answer').forEach(a => a.classList.remove('open'));
+    document.querySelectorAll('.faq-question').forEach(q => q.classList.remove('open'));
+    if (!isOpen) {
+        answer.classList.add('open');
+        el.classList.add('open');
+    }
+}
+</script>
+}

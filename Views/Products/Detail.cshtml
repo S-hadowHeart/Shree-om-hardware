@@ -1,0 +1,257 @@
+@model shree_om.Models.Product
+
+@{
+    ViewData["Title"] = $"{Model.Name} – Shree Om Hardware";
+    var related = ViewData["RelatedProducts"] as List<shree_om.Models.Product> ?? new();
+}
+
+<style>
+    .detail-page { max-width:1200px; margin:0 auto; padding:28px 32px; }
+    .breadcrumb { padding:14px 32px; font-size:13px; color:var(--text-grey); max-width:1200px; margin:0 auto; }
+    .breadcrumb a { color:var(--text-grey); } .breadcrumb a:hover { color:var(--orange); }
+    .breadcrumb span { margin:0 6px; }
+    .product-detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-bottom:40px; }
+    .product-img-wrap { border-radius:12px; overflow:hidden; background:#F9FAFB; border:1px solid var(--border); min-height:340px; display:flex; align-items:center; justify-content:center; position:relative; }
+    .product-img-wrap .badge { position:absolute; top:14px; left:14px; background:var(--orange); color:white; font-size:12px; font-weight:700; padding:4px 10px; border-radius:5px; }
+    .product-info .sku { font-size:12px; color:var(--text-grey); margin-bottom:10px; }
+    .product-info h1 { font-size:24px; font-weight:800; margin-bottom:10px; }
+    .product-info .rating-row { display:flex; align-items:center; gap:6px; margin-bottom:14px; }
+    .product-info .rating-row .stars { color:#F59E0B; }
+    .product-info .rating-row a { color:var(--orange); font-size:13px; }
+    .product-info .price-row { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .product-info .price-row .price { font-size:28px; font-weight:800; color:var(--text-dark); }
+    .product-info .price-row .orig { font-size:16px; color:var(--text-grey); text-decoration:line-through; }
+    .product-info .price-row .disc { font-size:13px; font-weight:700; color:white; background:var(--orange); padding:2px 8px; border-radius:4px; }
+    .product-info .stock-badge { display:inline-flex; align-items:center; gap:6px; background:#F0FDF4; color:#16A34A; font-size:13px; font-weight:600; padding:5px 12px; border-radius:20px; margin-bottom:16px; }
+    .product-info p { font-size:14px; color:var(--text-grey); line-height:1.7; margin-bottom:20px; }
+    .qty-row { display:flex; align-items:center; gap:16px; margin-bottom:20px; }
+    .qty-row label { font-size:13px; font-weight:600; }
+    .qty-wrap { display:flex; align-items:center; gap:0; border:1px solid var(--border); border-radius:6px; overflow:hidden; }
+    .qty-wrap button { width:36px; height:38px; border:none; background:var(--bg-light); cursor:pointer; font-size:16px; font-weight:700; transition:background .2s; }
+    .qty-wrap button:hover { background:var(--border); }
+    .qty-wrap input { width:52px; height:38px; border:none; border-left:1px solid var(--border); border-right:1px solid var(--border); text-align:center; font-size:15px; font-family:inherit; outline:none; }
+    .action-row { display:flex; gap:12px; align-items:center; margin-bottom:24px; }
+    .btn-add-cart-lg { flex:1; background:var(--orange); color:white; padding:13px; border:none; border-radius:8px; font-size:15px; font-weight:600; cursor:pointer; font-family:inherit; transition:background .2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .btn-add-cart-lg:hover { background:var(--orange-dark); }
+    .btn-wishlist { width:46px; height:46px; border:1.5px solid var(--border); border-radius:8px; background:white; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; color:var(--text-grey); transition:all .2s; }
+    .btn-wishlist:hover { border-color:var(--orange); color:var(--orange); }
+    .perks { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .perk { display:flex; align-items:center; gap:10px; padding:12px; border:1px solid var(--border); border-radius:8px; font-size:13px; color:var(--text-grey); }
+    .perk i { color:var(--orange); font-size:16px; }
+    /* Tabs */
+    .tabs-bar { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:24px; }
+    .tab-btn { padding:12px 20px; font-size:14px; font-weight:500; background:none; border:none; cursor:pointer; font-family:inherit; color:var(--text-grey); border-bottom:2px solid transparent; margin-bottom:-2px; transition:color .2s, border-color .2s; }
+    .tab-btn.active { color:var(--orange); border-bottom-color:var(--orange); font-weight:700; }
+    .tab-content { display:none; font-size:14px; color:var(--text-grey); line-height:1.8; }
+    .tab-content.active { display:block; }
+    /* Related */
+    .related-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+    @@media(max-width:768px) { .product-detail-grid { grid-template-columns:1fr; } .related-grid { grid-template-columns:repeat(2,1fr); } }
+</style>
+
+<!-- Breadcrumb -->
+<nav class="breadcrumb">
+    <a asp-controller="Home" asp-action="Index">Home</a>
+    <span>&rsaquo;</span>
+    <a asp-controller="Products" asp-action="Index">Products</a>
+    <span>&rsaquo;</span>
+    <strong>@Model.Name</strong>
+</nav>
+
+<div class="detail-page">
+    <!-- Main Product Detail -->
+    <div class="product-detail-grid">
+        <!-- Image -->
+        <div class="product-img-wrap">
+            @if (Model.DiscountPercent > 0)
+            {
+                <span class="badge">@Model.DiscountPercent% OFF</span>
+            }
+            <i class="fa-solid fa-screwdriver-wrench" style="font-size:96px; color:#D1D5DB;"></i>
+        </div>
+
+        <!-- Info -->
+        <div class="product-info">
+            <div class="sku">SKU: SH-@Model.CategoryId.ToString("D2")-@Model.Id.ToString("D3")</div>
+            <h1>@Model.Name</h1>
+
+            <div class="rating-row">
+                <span class="stars">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= (int)Model.Rating) { <i class="fa-solid fa-star" style="font-size:14px;"></i> }
+                        else { <i class="fa-regular fa-star" style="font-size:14px;"></i> }
+                    }
+                </span>
+                <span style="font-size:14px; font-weight:600;">@Model.Rating</span>
+                <a href="#reviews">(@Model.ReviewCount reviews)</a>
+            </div>
+
+            <div class="price-row">
+                <span class="price">₹@Model.Price.ToString("N0")</span>
+                @if (Model.OriginalPrice > Model.Price)
+                {
+                    <span class="orig">₹@Model.OriginalPrice.ToString("N0")</span>
+                    <span class="disc">@Model.DiscountPercent% OFF</span>
+                }
+            </div>
+
+            @if (Model.Stock > 0)
+            {
+                <span class="stock-badge"><i class="fa-solid fa-circle-check"></i>In Stock (@Model.Stock units available)</span>
+            }
+            else
+            {
+                <span style="display:inline-flex; align-items:center; gap:6px; background:#FEF2F2; color:#DC2626; font-size:13px; font-weight:600; padding:5px 12px; border-radius:20px; margin-bottom:16px;">
+                    <i class="fa-solid fa-circle-xmark"></i>Out of Stock
+                </span>
+            }
+
+            <p>@Model.Description</p>
+
+            <div class="qty-row">
+                <label>Quantity</label>
+                <div class="qty-wrap">
+                    <button type="button" onclick="changeQty(-1)">−</button>
+                    <input type="number" id="qty" value="1" min="1" max="@Model.Stock" />
+                    <button type="button" onclick="changeQty(1)">+</button>
+                </div>
+            </div>
+
+            <div class="action-row">
+                <button class="btn-add-cart-lg" @(Model.Stock == 0 ? "disabled style=\"opacity:.6;cursor:not-allowed\"" : "")>
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Add to Cart
+                </button>
+                <button class="btn-wishlist" title="Add to Wishlist"><i class="fa-regular fa-heart"></i></button>
+            </div>
+
+            <div class="perks">
+                <div class="perk"><i class="fa-solid fa-truck-fast"></i><div><div style="font-weight:600;color:var(--text-dark);">Free Shipping</div><div>On orders above ₹500</div></div></div>
+                <div class="perk"><i class="fa-solid fa-shield-halved"></i><div><div style="font-weight:600;color:var(--text-dark);">Warranty</div><div>3-5 years limited</div></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs: Description / Specifications / Reviews -->
+    <div style="border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:40px;">
+        <div class="tabs-bar">
+            <button class="tab-btn active" onclick="showTab('desc', this)">Description</button>
+            <button class="tab-btn" onclick="showTab('specs', this)">Specifications</button>
+            <button class="tab-btn" onclick="showTab('reviews', this)" id="reviewsTab">Reviews (@Model.ReviewCount)</button>
+        </div>
+
+        <div id="desc" class="tab-content active">
+            <p>
+                Premium quality @Model.Name with multiple size and finish options. Made from high-grade stainless steel for durability and elegance. Perfect for residential and commercial applications. The finish is corrosion-resistant, ensuring that the handle maintains its aesthetic appeal even after years of use. Designed with ergonomic grip in mind, it provides a solid feel and smooth operation every time you open your door.
+            </p>
+        </div>
+
+        <div id="specs" class="tab-content">
+            <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                @foreach (var spec in new[] {
+                    ("Material", "Stainless Steel SS304"),
+                    ("Finish", Model.Name.Contains("Chrome") ? "Chrome" : Model.Name.Contains("Black") ? "Matt Black" : Model.Name.Contains("Gold") ? "Gold" : "Chrome"),
+                    ("Category", Model.Category?.Name ?? "–"),
+                    ("SKU", $"SH-{Model.CategoryId:D2}-{Model.Id:D3}"),
+                    ("Warranty", "3–5 Years Limited Warranty"),
+                    ("Country of Origin", "India"),
+                    ("Weight", "350g"),
+                    ("In Stock", Model.Stock.ToString() + " units")
+                })
+                {
+                    <tr style="border-bottom:1px solid var(--border);">
+                        <td style="padding:10px 14px; font-weight:600; color:var(--text-dark); width:200px; background:var(--bg-light);">@spec.Item1</td>
+                        <td style="padding:10px 14px; color:var(--text-grey);">@spec.Item2</td>
+                    </tr>
+                }
+            </table>
+        </div>
+
+        <div id="reviews" class="tab-content">
+            <div style="display:flex; align-items:center; gap:24px; margin-bottom:24px; padding:20px; background:var(--bg-light); border-radius:8px;">
+                <div style="text-align:center;">
+                    <div style="font-size:48px; font-weight:800;">@Model.Rating</div>
+                    <div style="color:#F59E0B; font-size:18px;">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= (int)Model.Rating) { <i class="fa-solid fa-star"></i> }
+                            else { <i class="fa-regular fa-star"></i> }
+                        }
+                    </div>
+                    <div style="font-size:13px; color:var(--text-grey); margin-top:4px;">@Model.ReviewCount reviews</div>
+                </div>
+            </div>
+            <p style="color:var(--text-grey); font-size:14px;">Login to write a review for this product.</p>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    @if (related.Any())
+    {
+        <div>
+            <div class="section-header">
+                <h2 style="font-size:20px; font-weight:700;">Related Products</h2>
+                <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@Model.CategoryId" class="view-all">View All</a>
+            </div>
+            <div class="related-grid">
+                @foreach (var rp in related)
+                {
+                    <a asp-controller="Products" asp-action="Detail" asp-route-id="@rp.Id" style="text-decoration:none; color:inherit;">
+                        <div class="product-card" style="cursor:pointer;">
+                            @if (rp.DiscountPercent > 0) { <span class="badge">@rp.DiscountPercent% OFF</span> }
+                            <div class="product-img" style="height:160px; background:#F3F4F6; display:flex; align-items:center; justify-content:center;">
+                                <i class="fa-solid fa-screwdriver-wrench" style="font-size:36px; color:#D1D5DB;"></i>
+                            </div>
+                            <div class="card-body">
+                                <div class="sku">SKU: SH-@rp.CategoryId.ToString("D2")-@rp.Id.ToString("D3")</div>
+                                <div class="name">@rp.Name</div>
+                                <div class="rating">
+                                    <span class="stars">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= (int)rp.Rating) { <i class="fa-solid fa-star" style="font-size:11px;"></i> }
+                                            else { <i class="fa-regular fa-star" style="font-size:11px;"></i> }
+                                        }
+                                    </span>
+                                    <small>(@rp.ReviewCount)</small>
+                                </div>
+                                <div class="pricing">
+                                    <span class="price">₹@rp.Price.ToString("N0")</span>
+                                    @if (rp.OriginalPrice > rp.Price) { <span class="orig-price">₹@rp.OriginalPrice.ToString("N0")</span> }
+                                </div>
+                                <div class="stock" style="font-size:11px;"><i class="fa-solid fa-circle-check" style="margin-right:3px;"></i>In Stock</div>
+                                <button class="add-cart" onclick="event.preventDefault(); event.stopPropagation();">
+                                    <i class="fa-solid fa-cart-plus" style="margin-right:5px;"></i>Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+<script>
+function changeQty(delta) {
+    var inp = document.getElementById('qty');
+    var val = parseInt(inp.value) + delta;
+    var max = parseInt(inp.max) || 999;
+    if (val < 1) val = 1;
+    if (val > max) val = max;
+    inp.value = val;
+}
+function showTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+}
+// Scroll to reviews if #reviews in URL
+if (window.location.hash === '#reviews') {
+    setTimeout(() => { document.getElementById('reviewsTab')?.click(); }, 100);
+}
+</script>
+}

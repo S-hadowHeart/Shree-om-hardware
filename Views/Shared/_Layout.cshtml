@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Shree Om Hardware – Premium door handles, locks, hinges and hardware parts. Made in India." />
+    <title>@ViewData["Title"] - Shree Om Hardware</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+    <!-- Announcement Bar -->
+    <div class="announcement-bar">
+        <div class="container-fluid">
+            <span>Premium Hardware Parts &ndash; Made in India 🇮🇳</span>
+            <span>Free Shipping on Orders Above ₹500</span>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="site-navbar">
+        <div class="inner">
+            <!-- Logo -->
+            <a asp-controller="Home" asp-action="Index" class="navbar-logo">
+                <div class="logo-box">SO</div>
+                <div class="brand-text">
+                    <div class="name">Shree Om</div>
+                    <div class="sub">Hardware</div>
+                </div>
+            </a>
+
+            <!-- Search -->
+            <div class="navbar-search">
+                <span class="search-icon"><i class="fa fa-search"></i></span>
+                <input type="text" placeholder="Search for door handles, locks, hinges..." id="navSearch" />
+            </div>
+
+            <!-- Nav Links -->
+            <div class="navbar-links">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+                <a asp-controller="Products" asp-action="Index">Products</a>
+                <a asp-controller="About" asp-action="Index">About</a>
+                <a asp-controller="Contact" asp-action="Index">Contact</a>
+            </div>
+
+            <!-- Icons + Auth -->
+            <div class="navbar-icons">
+                <a href="#" title="Wishlist"><i class="fa-regular fa-heart"></i></a>
+                <a href="#" title="Cart"><i class="fa-solid fa-cart-shopping"></i></a>
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <a href="#" title="Profile"><i class="fa-regular fa-circle-user"></i></a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-login-nav">Logout</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login" class="btn-login-nav">Login</a>
+                }
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="page-content">
+        @RenderBody()
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <!-- Brand -->
+            <div class="footer-brand">
+                <div class="logo-row">
+                    <div class="logo-box">SO</div>
+                    <div>
+                        <div class="brand-name">Shree Om Hardware</div>
+                        <div class="brand-tagline">Premium Quality</div>
+                    </div>
+                </div>
+                <p>Manufacturing premium quality door handles, locks, hinges, and hardware parts since 2010.</p>
+                <div class="social-links">
+                    <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a asp-controller="About" asp-action="Index">About Us</a></li>
+                    <li><a asp-controller="Products" asp-action="Index">Products</a></li>
+                    <li><a asp-controller="Contact" asp-action="Index">Contact Us</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div class="footer-col">
+                <h4>Contact Us</h4>
+                <ul class="footer-contact">
+                    <li>
+                        <span class="icon"><i class="fa-solid fa-location-dot"></i></span>
+                        <span>123, Industrial Area<br />Rajkot, Gujarat &ndash; 360001<br />India</span>
+                    </li>
+                    <li>
+                        <span class="icon"><i class="fa-solid fa-phone"></i></span>
+                        <span>+91-98765-43210</span>
+                    </li>
+                    <li>
+                        <span class="icon"><i class="fa-solid fa-envelope"></i></span>
+                        <span>info@shreeomhardware.com</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            &copy; 2026 Shree Om Hardware. All rights reserved. Made in India with <span class="heart">❤</span>
+        </div>
+    </footer>
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
