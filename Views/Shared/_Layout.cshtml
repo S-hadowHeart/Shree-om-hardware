@@ -11,14 +11,6 @@
 </head>
 <body>
 
-    <!-- Announcement Bar -->
-    <div class="announcement-bar">
-        <div class="container-fluid">
-            <span>Premium Hardware Parts &ndash; Made in India 🇮🇳</span>
-            <span>Free Shipping on Orders Above ₹500</span>
-        </div>
-    </div>
-
     <!-- Navbar -->
     <nav class="site-navbar">
         <div class="inner">
@@ -47,23 +39,50 @@
 
             <!-- Icons + Auth -->
             <div class="navbar-icons">
-                <a href="#" title="Wishlist"><i class="fa-regular fa-heart"></i></a>
-                <a href="#" title="Cart"><i class="fa-solid fa-cart-shopping"></i></a>
                 @if (User.Identity != null && User.Identity.IsAuthenticated)
                 {
-                    <a href="#" title="Profile"><i class="fa-regular fa-circle-user"></i></a>
-                    <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn-login-nav">Logout</button>
-                    </form>
+                    <a href="#" title="Wishlist"><i class="fa-regular fa-heart"></i></a>
+                    <a href="#" title="Cart"><i class="fa-solid fa-cart-shopping"></i></a>
+                    <!-- Divider -->
+                    <div class="nav-auth-divider"></div>
+                    <!-- Profile Dropdown -->
+                    <div class="profile-dropdown-wrap">
+                        <button class="profile-btn" type="button" id="profileDropBtn" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa-regular fa-circle-user"></i>
+                            <span class="profile-name">@User.Identity.Name</span>
+                            <i class="fa-solid fa-chevron-down profile-chevron"></i>
+                        </button>
+                        <div class="profile-dropdown" id="profileDropMenu">
+                            <div class="profile-drop-header">
+                                <div class="profile-drop-avatar"><i class="fa-solid fa-user"></i></div>
+                                <div>
+                                    <div class="profile-drop-name">@User.Identity.Name</div>
+                                    <div class="profile-drop-email">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value</div>
+                                </div>
+                            </div>
+                            <hr class="drop-divider" />
+                            <a href="#" class="drop-item"><i class="fa-regular fa-user"></i> My Profile</a>
+                            <a href="#" class="drop-item"><i class="fa-solid fa-bag-shopping"></i> My Orders</a>
+                            <a href="#" class="drop-item"><i class="fa-regular fa-heart"></i> Wishlist</a>
+                            <hr class="drop-divider" />
+                            <form asp-controller="Account" asp-action="Logout" method="post" style="margin:0;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="drop-item drop-logout">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 }
                 else
                 {
                     <a asp-controller="Account" asp-action="Login" class="btn-login-nav">Login</a>
+                    <a asp-controller="Account" asp-action="Register" class="btn-register-nav">Register</a>
                 }
             </div>
         </div>
     </nav>
+
 
     <!-- Page Content -->
     <div class="page-content">
@@ -129,5 +148,23 @@
 
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        // Profile dropdown toggle
+        (function () {
+            var btn  = document.getElementById('profileDropBtn');
+            var wrap = btn && btn.closest('.profile-dropdown-wrap');
+            if (!btn || !wrap) return;
+            btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                wrap.classList.toggle('open');
+                btn.setAttribute('aria-expanded', wrap.classList.contains('open'));
+            });
+            document.addEventListener('click', function () {
+                wrap.classList.remove('open');
+                btn.setAttribute('aria-expanded', 'false');
+            });
+        })();
+    </script>
 </body>
 </html>
+

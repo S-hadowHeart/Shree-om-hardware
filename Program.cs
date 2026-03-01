@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using shree_om.Data;
+using shree_om.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,9 @@ builder.Services.AddControllersWithViews();
 // Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Email Service
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Session
 builder.Services.AddSession(options =>
@@ -51,3 +55,4 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.Run();
+

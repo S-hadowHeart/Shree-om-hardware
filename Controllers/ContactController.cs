@@ -2,16 +2,19 @@ using Microsoft.AspNetCore.Mvc;
 using shree_om.Data;
 using shree_om.Models;
 using shree_om.Models.ViewModels;
+using shree_om.Services;
 
 namespace shree_om.Controllers
 {
     public class ContactController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailService _emailService;
 
-        public ContactController(ApplicationDbContext context)
+        public ContactController(ApplicationDbContext context, IEmailService emailService)
         {
-            _context = context;
+            _context      = context;
+            _emailService = emailService;
         }
 
         // GET: /Contact
@@ -42,6 +45,10 @@ namespace shree_om.Controllers
 
             _context.ContactMessages.Add(message);
             await _context.SaveChangesAsync();
+
+            // Send thank-you email (swallow errors so the form still succeeds)
+            try { await _emailService.SendContactThankYouAsync(model.Email, model.FullName); }
+            catch { }
 
             TempData["ContactSuccess"] = "Thank you! Your message has been sent. We'll get back to you within 24 hours.";
             return RedirectToAction("Index");

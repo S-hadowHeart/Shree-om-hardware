@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Login – Shree Om Hardware";
     Layout = "_Layout";
+    var unverifiedEmail = TempData["UnverifiedEmail"]?.ToString();
+    var hasErrors = !ViewData.ModelState.IsValid && ViewData.ModelState.Values.Any(v => v.Errors.Count > 0);
 }
 
 <div class="auth-page">
@@ -12,6 +14,13 @@
             <i class="fa-solid fa-circle-check" style="margin-right:6px;"></i>@TempData["SuccessMessage"]
         </div>
     }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert-danger" style="max-width:480px; margin: 0 auto 16px;">
+            <i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>@TempData["ErrorMessage"]
+        </div>
+    }
+
     <div class="auth-card">
         <!-- Logo -->
         <div class="auth-logo">
@@ -21,11 +30,32 @@
         <h2>Welcome Back</h2>
         <p class="auth-sub">Login to your Shree Om Hardware account</p>
 
-        @if (!ViewData.ModelState.IsValid)
+        @if (hasErrors)
         {
-            <div class="alert-danger">
+            <div class="alert-danger" style="margin-bottom:16px;">
                 <i class="fa-solid fa-circle-exclamation" style="margin-right:6px;"></i>
-                <span asp-validation-summary="ModelOnly"></span>
+                @foreach (var state in ViewData.ModelState.Values)
+                {
+                    foreach (var error in state.Errors)
+                    {
+                        <span>@error.ErrorMessage</span>
+                    }
+                }
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(unverifiedEmail))
+        {
+            <div class="alert-warn" style="margin-bottom:14px;">
+                <i class="fa-solid fa-envelope" style="margin-right:6px;"></i>
+                Email not verified.
+                <form asp-controller="Account" asp-action="ResendVerification" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="email" value="@unverifiedEmail" />
+                    <button type="submit" class="link-orange" style="background:none;border:none;cursor:pointer;font-size:inherit;padding:0;">
+                        Resend verification email →
+                    </button>
+                </form>
             </div>
         }
 
@@ -36,7 +66,7 @@
             <div class="form-group">
                 <label asp-for="Email">Email Address</label>
                 <input asp-for="Email" type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email" />
-                <span class="text-danger" id="loginEmailErr"></span>
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -47,7 +77,7 @@
                         <i class="fa-regular fa-eye"></i>
                     </button>
                 </div>
-                <span class="text-danger" id="loginPassErr"></span>
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="form-row">
@@ -69,4 +99,12 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        function togglePw(id, btn) {
+            var inp = document.getElementById(id);
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+            btn.querySelector('i').classList.toggle('fa-eye');
+            btn.querySelector('i').classList.toggle('fa-eye-slash');
+        }
+    </script>
 }

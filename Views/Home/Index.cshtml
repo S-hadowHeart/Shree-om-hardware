@@ -68,7 +68,10 @@
                                 }
                             </div>
                             <div class="stock"><i class="fa-solid fa-circle-check" style="margin-right:4px;"></i>In Stock (@product.Stock units)</div>
-                            <button class="add-cart">Add to cart</button>
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <button class="add-cart">Add to cart</button>
+                            }
                         </div>
                     </div>
                 }

@@ -42,11 +42,17 @@ ScaffoldingReadme.txt
 *.ldf
 *.ndf
 
-# Environment / secrets
+# Environment / secrets (DO NOT COMMIT)
 appsettings.Development.json
+appsettings.*.json
+!appsettings.json
 secrets.json
 .env
 
 # Temporary files
 *.tmp
 *.log
+
+# wwwroot libraries (installed via npm/libman)
+wwwroot/lib/
+

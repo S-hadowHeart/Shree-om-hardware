@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Verify Email – Shree Om Hardware";
+    var status = ViewData["VerifyStatus"]?.ToString();
+    var expiredEmail = ViewData["ExpiredEmail"]?.ToString();
+}
+
+<section class="auth-section">
+    <div class="auth-card auth-card--wide">
+        @if (status == "expired")
+        {
+            <div class="auth-icon auth-icon--warn"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <h1 class="auth-title">Link Expired</h1>
+            <p class="auth-subtitle">Your verification link has expired (links are valid for 24 hours).</p>
+            @if (!string.IsNullOrEmpty(expiredEmail))
+            {
+                <form asp-controller="Account" asp-action="ResendVerification" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="email" value="@expiredEmail" />
+                    <button type="submit" class="btn-auth btn-auth--full" style="margin-top:20px;">
+                        <i class="fa-solid fa-paper-plane"></i> Resend Verification Email
+                    </button>
+                </form>
+            }
+            <a asp-controller="Account" asp-action="Login" class="auth-link" style="display:block;margin-top:16px;">← Back to Login</a>
+        }
+        else if (status == "invalid")
+        {
+            <div class="auth-icon auth-icon--error"><i class="fa-solid fa-circle-xmark"></i></div>
+            <h1 class="auth-title">Invalid Link</h1>
+            <p class="auth-subtitle">This verification link is invalid or has already been used.</p>
+            <a asp-controller="Account" asp-action="Login" class="auth-link" style="display:block;margin-top:16px;">← Back to Login</a>
+        }
+        else
+        {
+            <div class="auth-icon auth-icon--success"><i class="fa-solid fa-circle-check"></i></div>
+            <h1 class="auth-title">Email Verified!</h1>
+            <p class="auth-subtitle">Your account has been activated. You can now log in.</p>
+            <a asp-controller="Account" asp-action="Login" class="btn-auth btn-auth--full" style="margin-top:24px;text-align:center;display:block;">
+                Go to Login
+            </a>
+        }
+    </div>
+</section>

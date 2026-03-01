@@ -153,9 +153,12 @@
                                     }
                                 </div>
                                 <div class="stock"><i class="fa-solid fa-circle-check" style="margin-right:4px;"></i>In Stock (@p.Stock units)</div>
-                                <button class="add-cart" onclick="event.preventDefault(); event.stopPropagation();">
-                                    <i class="fa-solid fa-cart-plus" style="margin-right:6px;"></i>Add to cart
-                                </button>
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <button class="add-cart" onclick="event.preventDefault(); event.stopPropagation();">
+                                        <i class="fa-solid fa-cart-plus" style="margin-right:6px;"></i>Add to cart
+                                    </button>
+                                }
                             </div>
                         </div>
                     </a>
