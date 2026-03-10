@@ -82,10 +82,17 @@
         background-color: #f9fafb;
     }
 
-    .nav-item span {
+    .nav-item svg {
         display: block;
-        font-size: 1.5rem;
         margin-bottom: 0.5rem;
+    }
+
+    .nav-item.active svg {
+        stroke: white;
+    }
+
+    .nav-item:not(.active) svg {
+        stroke: #374151;
     }
 
     .nav-item h3 {
@@ -146,9 +153,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
-        font-weight: 700;
         flex-shrink: 0;
+    }
+
+    .stat-icon svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        stroke-width: 2;
     }
 
     /* Dashboard Content */
@@ -286,19 +297,36 @@
         <!-- Navigation Cards -->
         <div class="dashboard-nav">
             <a href="/Admin/Dashboard" class="nav-item active">
-                <span>📊</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
                 <h3>Dashboard</h3>
             </a>
             <a href="/Admin/Products" class="nav-item">
-                <span>📦</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
                 <h3>Products</h3>
             </a>
             <a href="/Admin/Orders" class="nav-item">
-                <span>🛒</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
                 <h3>Orders</h3>
             </a>
             <a href="/Admin/Users" class="nav-item">
-                <span>👥</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
                 <h3>Users</h3>
             </a>
         </div>
@@ -312,7 +340,12 @@
                         <p class="stat-value">₹@ViewBag.TotalSales.ToString("N0")</p>
                         <span class="stat-change positive">+12% from last month</span>
                     </div>
-                    <div class="stat-icon" style="background: #fed7aa; color: #ea580c;">₹</div>
+                    <div class="stat-icon" style="background: #fed7aa; color: #ea580c;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
                 </div>
             </div>
 
@@ -322,7 +355,13 @@
                         <h3>Total Orders</h3>
                         <p class="stat-value">@ViewBag.TotalOrders.ToString("N0")</p>
                     </div>
-                    <div class="stat-icon" style="background: #bfdbfe; color: #2563eb;">🛒</div>
+                    <div class="stat-icon" style="background: #bfdbfe; color: #2563eb;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+                    </div>
                 </div>
             </div>
 
@@ -332,7 +371,14 @@
                         <h3>Total Users</h3>
                         <p class="stat-value">@ViewBag.TotalUsers</p>
                     </div>
-                    <div class="stat-icon" style="background: #bbf7d0; color: #16a34a;">👥</div>
+                    <div class="stat-icon" style="background: #bbf7d0; color: #16a34a;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
                 </div>
             </div>
 
@@ -342,7 +388,13 @@
                         <h3>Total Products</h3>
                         <p class="stat-value">@ViewBag.TotalProducts</p>
                     </div>
-                    <div class="stat-icon" style="background: #e9d5ff; color: #9333ea;">📦</div>
+                    <div class="stat-icon" style="background: #e9d5ff; color: #9333ea;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
