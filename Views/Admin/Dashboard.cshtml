@@ -3,92 +3,121 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<div class="admin-dashboard">
-    <div class="dashboard-header">
-        <h1>Admin Dashboard</h1>
-        <p>Welcome back, Admin User</p>
-        <a href="/Account/Logout" class="btn-logout">Logout</a>
-    </div>
+<div class="admin-wrapper">
 
-    <div class="dashboard-nav">
-        <a href="/Admin/Dashboard" class="nav-item active">
-            <span>📊</span> Dashboard
-        </a>
-        <a href="/Admin/Products" class="nav-item">
-            <span>📦</span> Products
-        </a>
-        <a href="/Admin/Orders" class="nav-item">
-            <span>🛒</span> Orders
-        </a>
-        <a href="/Admin/Users" class="nav-item">
-            <span>👥</span> Users
+    <!-- Header -->
+    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.5rem;">
+        <div>
+            <h1 class="admin-page-title">Admin Dashboard</h1>
+            <p class="admin-page-subtitle">Welcome back, Admin User</p>
+        </div>
+        <a href="/" class="btn-outline">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            Logout
         </a>
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #fff3e0;">₹</div>
-            <div class="stat-content">
-                <h3>Total Sales</h3>
-                <p class="stat-value">₹@ViewBag.TotalSales.ToString("N0")</p>
-                <span class="stat-change positive">+12% from last month</span>
+    <!-- Nav Cards -->
+    <div class="admin-nav-grid">
+        <a href="@Url.Action("Dashboard","Admin")" class="admin-nav-card active">
+            <svg class="admin-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+            Dashboard
+        </a>
+        <a href="@Url.Action("Products","Admin")" class="admin-nav-card">
+            <svg class="admin-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            Products
+        </a>
+        <a href="@Url.Action("Orders","Admin")" class="admin-nav-card">
+            <svg class="admin-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Orders
+        </a>
+        <a href="@Url.Action("Users","Admin")" class="admin-nav-card">
+            <svg class="admin-nav-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Users
+        </a>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="admin-stats-grid">
+        <div class="admin-stat-card">
+            <div>
+                <p class="admin-stat-label">Total Sales</p>
+                <p class="admin-stat-value" style="color:#f97316;">&#8377;@ViewBag.TotalSales.ToString("N0")</p>
+                <p class="admin-stat-change text-green">+12% from last month</p>
+            </div>
+            <div class="admin-stat-icon icon-orange">&#8377;</div>
+        </div>
+        <div class="admin-stat-card">
+            <div>
+                <p class="admin-stat-label">Total Orders</p>
+                <p class="admin-stat-value">@ViewBag.TotalOrders</p>
+            </div>
+            <div class="admin-stat-icon icon-blue">
+                <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
             </div>
         </div>
-
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #e3f2fd;">🛒</div>
-            <div class="stat-content">
-                <h3>Total Orders</h3>
-                <p class="stat-value">@ViewBag.TotalOrders</p>
+        <div class="admin-stat-card">
+            <div>
+                <p class="admin-stat-label">Total Users</p>
+                <p class="admin-stat-value">@ViewBag.TotalUsers</p>
+            </div>
+            <div class="admin-stat-icon icon-green">
+                <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </div>
         </div>
-
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #f3e5f5;">👥</div>
-            <div class="stat-content">
-                <h3>Total Users</h3>
-                <p class="stat-value">@ViewBag.TotalUsers</p>
+        <div class="admin-stat-card">
+            <div>
+                <p class="admin-stat-label">Total Products</p>
+                <p class="admin-stat-value">@ViewBag.TotalProducts</p>
             </div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-icon" style="background: #e8f5e9;">📦</div>
-            <div class="stat-content">
-                <h3>Total Products</h3>
-                <p class="stat-value">@ViewBag.TotalProducts</p>
+            <div class="admin-stat-icon icon-purple">
+                <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
             </div>
         </div>
     </div>
 
-    <div class="dashboard-content">
-        <div class="content-section">
-            <h2>Recent Orders</h2>
-            <div class="orders-list">
+    <!-- Two-col Section -->
+    <div class="admin-two-col">
+
+        <!-- Recent Orders -->
+        <div class="admin-panel">
+            <div class="admin-panel-body">
+                <h3 class="admin-panel-title">Recent Orders</h3>
                 @foreach (var order in ViewBag.RecentOrders)
                 {
-                    <div class="order-item">
+                    string badgeClass = order.Status switch {
+                        "Delivered"  => "badge-green",
+                        "Shipped"    => "badge-blue",
+                        "Processing" => "badge-yellow",
+                        _            => "badge-gray"
+                    };
+                    <div class="admin-list-item">
                         <div>
-                            <strong>Order @order.OrderNumber</strong>
-                            <p>@order.ItemCount items • ₹@order.TotalAmount</p>
+                            <p class="admin-list-item-title">Order #@order.OrderNumber</p>
+                            <p class="admin-list-item-sub">@order.ItemCount items &bull; &#8377;@order.TotalAmount.ToString("N0")</p>
                         </div>
-                        <span class="status-badge status-@order.Status.ToLower()">@order.Status</span>
+                        <span class="badge @badgeClass">@order.Status</span>
                     </div>
                 }
             </div>
         </div>
 
-        <div class="content-section">
-            <h2>Low Stock Alerts</h2>
-            <div class="stock-alerts">
+        <!-- Low Stock Alerts -->
+        <div class="admin-panel">
+            <div class="admin-panel-body">
+                <h3 class="admin-panel-title">Low Stock Alerts</h3>
                 @foreach (var product in ViewBag.LowStockProducts)
                 {
-                    <div class="stock-item">
-                        <strong>@product.Name</strong>
-                        <p>Only @product.Stock units left</p>
-                        <button class="btn-reorder">Reorder</button>
+                    <div class="admin-list-item">
+                        <div>
+                            <p class="admin-list-item-title">@product.Name</p>
+                            <p class="admin-list-item-sub">Only @product.Stock units left</p>
+                        </div>
+                        <button class="btn-outline" style="font-size:0.75rem; padding:0.35rem 0.75rem;">Reorder</button>
                     </div>
                 }
             </div>
         </div>
+
     </div>
 </div>
