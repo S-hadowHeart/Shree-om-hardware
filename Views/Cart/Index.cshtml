@@ -1,0 +1,325 @@
+@{
+    ViewData["Title"] = "Shopping Cart";
+    Layout = "_Layout";
+}
+
+<style>
+    .cart-bg {
+        background-color: #fff;
+        padding: 40px 20px 80px;
+        min-height: calc(100vh - 200px);
+    }
+    .cart-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    .cart-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 32px;
+    }
+    
+    .cart-layout {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 32px;
+        align-items: flex-start;
+    }
+    
+    /* Cart Items */
+    .cart-item {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        padding-bottom: 24px;
+        border-bottom: 1px solid #E5E7EB;
+        position: relative;
+    }
+    .item-img {
+        width: 100px;
+        height: 100px;
+        background: #F3F4F6;
+        border-radius: 8px;
+        object-fit: cover;
+    }
+    .item-details {
+        flex: 1;
+    }
+    .item-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 4px;
+    }
+    .item-sku {
+        font-size: 13px;
+        color: #6B7280;
+        margin-bottom: 8px;
+    }
+    .item-price-unit {
+        font-size: 15px;
+        color: #111827;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+    .item-price-unit span {
+        color: #9CA3AF;
+        font-weight: 400;
+    }
+    
+    .item-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+    .qty-controls {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #D1D5DB;
+        border-radius: 4px;
+    }
+    .qty-btn {
+        background: none;
+        border: none;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4B5563;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .qty-btn:hover {
+        background: #F3F4F6;
+    }
+    .qty-val {
+        width: 36px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 500;
+        border-left: 1px solid #D1D5DB;
+        border-right: 1px solid #D1D5DB;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-remove {
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #EF4444;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+    }
+    .btn-remove:hover {
+        text-decoration: underline;
+    }
+    
+    .item-total {
+        font-size: 18px;
+        font-weight: 700;
+        color: #111827;
+        text-align: right;
+        min-width: 80px;
+    }
+    
+    /* Order Summary */
+    .summary-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 0;
+    }
+    .summary-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 24px;
+    }
+    
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        font-size: 14px;
+        color: #4B5563;
+    }
+    .summary-row.total {
+        border-top: 1px solid #E5E7EB;
+        padding-top: 16px;
+        font-size: 16px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 24px;
+    }
+    .summary-row.total span:last-child {
+        color: #F97316;
+    }
+    
+    .coupon-wrap {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    .coupon-wrap input {
+        flex: 1;
+        padding: 10px 14px;
+        border: 1px solid #D1D5DB;
+        border-radius: 6px;
+        font-size: 13px;
+        outline: none;
+    }
+    .coupon-wrap input:focus {
+        border-color: #F97316;
+    }
+    .coupon-wrap button {
+        background: #fff;
+        border: 1px solid #D1D5DB;
+        padding: 0 16px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+    .coupon-wrap button:hover {
+        background: #F9FAFB;
+        border-color: #9CA3AF;
+    }
+    
+    .coupon-hint {
+        font-size: 11px;
+        color: #6B7280;
+        margin-bottom: 24px;
+    }
+    
+    .btn-checkout {
+        display: block;
+        width: 100%;
+        text-align: center;
+        background: #F97316;
+        color: #fff;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-bottom: 12px;
+        transition: 0.2s;
+        text-decoration: none;
+    }
+    .btn-checkout:hover {
+        background: #EA580C;
+    }
+    
+    .btn-continue {
+        display: block;
+        width: 100%;
+        text-align: center;
+        background: #fff;
+        color: #111827;
+        padding: 12px;
+        border: 1px solid #D1D5DB;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+        text-decoration: none;
+    }
+    .btn-continue:hover {
+        background: #F9FAFB;
+    }
+    
+    @@media (max-width: 768px) {
+        .cart-layout {
+            grid-template-columns: 1fr;
+        }
+        .item-img {
+            width: 80px;
+            height: 80px;
+        }
+    }
+</style>
+
+<div class="cart-bg">
+    <div class="cart-container">
+        <h1 class="cart-title">Shopping Cart</h1>
+
+        <div class="cart-layout">
+            <!-- Left Side: Cart Items -->
+            <div class="cart-items">
+                
+                <div class="cart-item">
+                    <!-- Placeholder color for image if no real image path is used -->
+                    <div class="item-img" style="background:#E1C6A6; display:flex; align-items:center; justify-content:center;">
+                        <!-- Using inline styling just as fallback, perfectly matching image tone -->
+                        <div style="width:100%; height:100%; background:url('https://placehold.co/100x100?text=Handle') center/cover;"></div>
+                    </div>
+                    
+                    <div class="item-details">
+                        <div class="item-name">Premium SS304 Door Handle - Chrome</div>
+                        <div class="item-sku">SKU: SH-DH-001</div>
+                        <div class="item-price-unit" style="color:#F97316;">₹899 <span style="font-weight:normal; color:#6B7280;">× 1</span></div>
+                        
+                        <div class="item-actions">
+                            <div class="qty-controls">
+                                <button class="qty-btn" type="button">-</button>
+                                <div class="qty-val">1</div>
+                                <button class="qty-btn" type="button">+</button>
+                            </div>
+                            
+                            <button class="btn-remove" type="button">
+                                <i class="fa-solid fa-trash-can"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="item-total">₹899</div>
+                </div>
+
+            </div>
+
+            <!-- Right Side: Order Summary -->
+            <div class="summary-card">
+                <h2 class="summary-title">Order Summary</h2>
+                
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span style="font-weight:600; color:#111827;">₹899</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span style="font-weight:600; color:#111827;">Free</span>
+                </div>
+                <div class="summary-row">
+                    <span>GST (18%)</span>
+                    <span style="font-weight:600; color:#111827;">₹162</span>
+                </div>
+                
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>₹1,061</span>
+                </div>
+                
+                <form action="#" method="post">
+                    <div class="coupon-wrap">
+                        <input type="text" placeholder="Enter coupon code" />
+                        <button type="button">Apply</button>
+                    </div>
+                    <div class="coupon-hint">Try: WELCOME10, SAVE20, FESTIVE25</div>
+                    
+                    <a asp-controller="Checkout" asp-action="Shipping" class="btn-checkout">Proceed to Checkout</a>
+                    <a asp-controller="Products" asp-action="Index" class="btn-continue">Continue Shopping</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

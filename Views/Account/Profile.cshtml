@@ -1,0 +1,232 @@
+@{
+    ViewData["Title"] = "My Dashboard - Profile";
+    Layout = "_Layout";
+}
+
+<style>
+    .dash-bg {
+        background-color: #F9FAFB;
+        padding: 40px 20px 80px;
+        min-height: calc(100vh - 200px);
+    }
+    .dash-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    .dash-page-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 24px;
+    }
+    .dash-grid {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 24px;
+    }
+    
+    /* Sidebar styling */
+    .dash-sidebar {
+        background: #fff;
+        border: 1px solid #E5E7EB;
+        border-radius: 12px;
+        padding: 32px 24px 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        display: flex;
+        flex-direction: column;
+        align-self: start;
+    }
+    .user-avatar-wrap {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+    .user-avatar {
+        width: 80px;
+        height: 80px;
+        background: #F97316;
+        color: #fff;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+    .user-name {
+        font-weight: 700;
+        font-size: 16px;
+        color: #111827;
+        margin-bottom: 2px;
+    }
+    .user-email {
+        font-size: 13px;
+        color: #6B7280;
+    }
+    
+    .dash-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .dash-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #4B5563;
+        transition: 0.2s all;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .dash-menu-link i {
+        font-size: 16px;
+        color: #9CA3AF;
+        width: 20px;
+        text-align: center;
+    }
+    .dash-menu-link:hover {
+        background: #FFF7ED;
+        color: #F97316;
+    }
+    .dash-menu-link:hover i {
+        color: #F97316;
+    }
+    
+    .dash-menu-link.active {
+        background: #F97316;
+        color: #fff;
+    }
+    .dash-menu-link.active i {
+        color: #fff;
+    }
+    
+    .dash-menu-link.logout {
+        color: #EF4444;
+        margin-top: 10px;
+    }
+    .dash-menu-link.logout i {
+        color: #EF4444;
+    }
+    
+    /* Main section styling */
+    .dash-main {
+        background: #fff;
+        border: 1px solid #E5E7EB;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        padding: 32px 40px;
+    }
+    
+    .profile-form-group {
+        margin-bottom: 24px;
+        max-width: 500px;
+    }
+    .profile-form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 8px;
+    }
+    .profile-form-group input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #D1D5DB;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #111827;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .profile-form-group input:focus {
+        border-color: #F97316;
+    }
+    
+    .btn-save {
+        background: #F97316;
+        color: #fff;
+        padding: 10px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s background;
+        margin-top: 8px;
+    }
+    .btn-save:hover {
+        background: #EA580C;
+    }
+    
+    @@media (max-width: 768px) {
+        .dash-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="dash-bg">
+    <div class="dash-container">
+        <h1 class="dash-page-title">My Dashboard</h1>
+
+        <div class="dash-grid">
+            <!-- Sidebar -->
+            <aside class="dash-sidebar">
+                <div class="user-avatar-wrap">
+                    <div class="user-avatar">
+                        @ViewData["UserInitial"] ?? "y"
+                    </div>
+                    <div class="user-name">@User.Identity?.Name ?? "yashmakwana2275"</div>
+                    <div class="user-email">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "yashmakwana2275@gmail.com"</div>
+                </div>
+
+                <nav class="dash-menu">
+                    <a asp-controller="Account" asp-action="Dashboard" class="dash-menu-link">
+                        <i class="fa-solid fa-border-all"></i> Dashboard
+                    </a>
+                    <a href="#" class="dash-menu-link">
+                        <i class="fa-solid fa-box"></i> My Orders
+                    </a>
+                    <a href="#" class="dash-menu-link">
+                        <i class="fa-regular fa-heart"></i> Wishlist
+                    </a>
+                    <a asp-controller="Account" asp-action="Profile" class="dash-menu-link active">
+                        <i class="fa-regular fa-user"></i> Profile
+                    </a>
+                    <a asp-controller="Account" asp-action="ForgotPassword" class="dash-menu-link">
+                        <i class="fa-solid fa-key"></i> Reset Password
+                    </a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="margin:0;">
+                         <button type="submit" class="dash-menu-link logout" style="width:100%; border:none; background:none; text-align:left;">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </form>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="dash-main">
+                <form method="post" asp-action="Profile">
+                    <div class="profile-form-group">
+                        <label>Full Name</label>
+                        <input type="text" name="FullName" value="yashmakwana2275" />
+                    </div>
+                    <div class="profile-form-group">
+                        <label>Email</label>
+                        <input type="email" name="Email" value="yashmakwana2275@gmail.com" />
+                    </div>
+                    <div class="profile-form-group">
+                        <label>Phone</label>
+                        <input type="tel" name="Phone" value="+91-9876543210" />
+                    </div>
+                    
+                    <button type="submit" class="btn-save">Save Changes</button>
+                </form>
+            </main>
+        </div>
+    </div>
+</div>

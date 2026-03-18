@@ -1,77 +1,196 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
-@{
+﻿@{
     ViewData["Title"] = "Shipping Address";
     Layout = "_Layout";
 }
 
-<div class="max-w-3xl mx-auto">
+<style>
+    .shipping-bg {
+        background-color: #fff;
+        padding: 40px 20px 80px;
+        min-height: calc(100vh - 200px);
+    }
+    .checkout-container {
+        max-width: 640px;
+        margin: 0 auto;
+    }
+    /* Stepper */
+    .stepper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 40px;
+        position: relative;
+    }
+    .stepper-line {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: #E5E7EB;
+        z-index: 1;
+    }
+    .step-item {
+        position: relative;
+        z-index: 2;
+        background: #fff;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .step-number {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+    }
+    .step-label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+    
+    .step-item.active .step-number {
+        background: #F97316;
+        color: #fff;
+    }
+    .step-item.active .step-label {
+        color: #F97316;
+    }
+    
+    .step-item.inactive .step-number {
+        background: #fff;
+        border: 1px solid #9CA3AF;
+        color: #9CA3AF;
+    }
+    .step-item.inactive .step-label {
+        color: #9CA3AF;
+    }
+    
+    /* Form */
+    .shipping-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 24px;
+    }
+    .ship-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    .ship-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+    .ship-group label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+    .ship-group input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #D1D5DB;
+        border-radius: 6px;
+        font-size: 14px;
+        color: #374151;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .ship-group input:focus {
+        border-color: #F97316;
+    }
+    
+    .btn-continue {
+        width: 100%;
+        background: #F97316;
+        color: #fff;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-top: 16px;
+    }
+    .btn-continue:hover {
+        background: #EA580C;
+    }
+    
+    @@media (max-width: 600px) {
+        .ship-row {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 
-    <h1 class="text-2xl font-bold text-slate-800 mb-6">
-        Shipping Address
-    </h1>
-
-    <div class="bg-white shadow-sm rounded-lg p-6">
-
-      @*   @if (ViewBag.Success != null)
-        {
-            <div class="bg-green-100 text-green-600 p-2 rounded mb-4">
-                @ViewBag.Success
+<div class="shipping-bg">
+    <div class="checkout-container">
+        
+        <!-- Stepper -->
+        <div class="stepper">
+            <div class="stepper-line"></div>
+            <div class="step-item active">
+                <div class="step-number">1</div>
+                <div class="step-label">Shipping</div>
             </div>
-        } *@
-
-        <form method="post">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                <div>
-                    <label class="text-sm text-gray-600">Full Name</label>
-                    <input type="text" name="fullName"
-                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
-                </div>
-
-                <div>
-                    <label class="text-sm text-gray-600">Phone Number</label>
-                    <input type="text" name="phone"
-                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
-                </div>
-
-                <div class="md:col-span-2">
-                    <label class="text-sm text-gray-600">Address</label>
-                    <input type="text" name="address"
-                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
-                </div>
-
-                <div>
-                    <label class="text-sm text-gray-600">City</label>
-                    <input type="text" name="city"
-                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
-                </div>
-
-                <div>
-                    <label class="text-sm text-gray-600">State</label>
-                    <input type="text" name="state"
-                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
-                </div>
-
-                <div>
-                    <label class="text-sm text-gray-600">Pincode</label>
-                    <input type="text" name="pincode"
-                           class="w-full border rounded-md px-4 py-2 mt-1 focus:ring-2 focus:ring-orange-400" />
-                </div>
-
+            <div class="step-item inactive">
+                <div class="step-number">2</div>
+                <div class="step-label">Payment</div>
             </div>
-
-            <div class="mt-6">
-                <button type="submit"
-                        class="bg-orange-500 text-white px-6 py-2 rounded-md hover:bg-orange-600">
-                    Save Address
-                </button>
+        </div>
+        
+        <h2 class="shipping-title">Shipping Address</h2>
+        
+        <form method="post" action="/Checkout/Payment" class="ship-form">
+            <!-- First Row (Empty logic but visible mapping) -->
+            <div class="ship-group">
+                <label>Full Name</label>
+                <input type="text" name="FullName" value="yashmakwana2275" />
             </div>
-
+            
+            <div class="ship-group">
+                <label>Phone</label>
+                <input type="text" name="Phone" value="+91-9876543210" />
+            </div>
+            
+            <div class="ship-group">
+                <label>Address Line 1</label>
+                <input type="text" name="AddressLine1" value="123, Street Name" />
+            </div>
+            
+            <div class="ship-row">
+                <div class="ship-group">
+                    <label>City</label>
+                    <input type="text" name="City" value="City" />
+                </div>
+                <div class="ship-group">
+                    <label>State</label>
+                    <input type="text" name="State" value="State" />
+                </div>
+            </div>
+            
+            <div class="ship-row">
+                <div class="ship-group">
+                    <label>PIN Code</label>
+                    <input type="text" name="PinCode" value="360001" />
+                </div>
+                <div class="ship-group">
+                    <label>Country</label>
+                    <input type="text" name="Country" value="India" />
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-continue">Continue to Payment</button>
         </form>
 
     </div>

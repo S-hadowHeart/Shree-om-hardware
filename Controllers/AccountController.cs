@@ -17,9 +17,9 @@ namespace shree_om.Controllers
 
         public AccountController(ApplicationDbContext context, IEmailService emailService, IConfiguration config)
         {
-            _context      = context;
+            _context = context;
             _emailService = emailService;
-            _config       = config;
+            _config = config;
         }
 
         // ─── LOGIN ────────────────────────────────────────────────────────────────
@@ -62,17 +62,17 @@ namespace shree_om.Controllers
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role,  user.Role)
             };
-            var identity   = new ClaimsIdentity(claims, "CookieAuth");
-            var authProps  = new AuthenticationProperties
+            var identity = new ClaimsIdentity(claims, "CookieAuth");
+            var authProps = new AuthenticationProperties
             {
                 IsPersistent = model.RememberMe,
-                ExpiresUtc   = model.RememberMe
+                ExpiresUtc = model.RememberMe
                     ? DateTimeOffset.UtcNow.AddDays(30)
                     : DateTimeOffset.UtcNow.AddHours(2)
             };
 
             await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(identity), authProps);
-            HttpContext.Session.SetString("UserName",  user.FullName);
+            HttpContext.Session.SetString("UserName", user.FullName);
             HttpContext.Session.SetString("UserEmail", user.Email);
 
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
@@ -107,14 +107,14 @@ namespace shree_om.Controllers
             var token = Guid.NewGuid().ToString("N");
             var user = new User
             {
-                FullName                    = model.FullName,
-                Email                       = model.Email,
-                PhoneNumber                 = model.PhoneNumber,
-                PasswordHash               = BCrypt.Net.BCrypt.HashPassword(model.Password),
-                CreatedAt                   = DateTime.UtcNow,
-                Role                        = "Customer",
-                IsEmailVerified             = false,
-                EmailVerificationToken      = token,
+                FullName = model.FullName,
+                Email = model.Email,
+                PhoneNumber = model.PhoneNumber,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Password),
+                CreatedAt = DateTime.UtcNow,
+                Role = "Customer",
+                IsEmailVerified = false,
+                EmailVerificationToken = token,
                 EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24)
             };
 
@@ -157,8 +157,8 @@ namespace shree_om.Controllers
                 return View();
             }
 
-            user.IsEmailVerified              = true;
-            user.EmailVerificationToken       = null;
+            user.IsEmailVerified = true;
+            user.EmailVerificationToken = null;
             user.EmailVerificationTokenExpiry = null;
             await _context.SaveChangesAsync();
 
@@ -175,11 +175,11 @@ namespace shree_om.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && !u.IsEmailVerified);
             if (user != null)
             {
-                user.EmailVerificationToken       = Guid.NewGuid().ToString("N");
-                user.EmailVerificationTokenExpiry  = DateTime.UtcNow.AddHours(24);
+                user.EmailVerificationToken = Guid.NewGuid().ToString("N");
+                user.EmailVerificationTokenExpiry = DateTime.UtcNow.AddHours(24);
                 await _context.SaveChangesAsync();
 
-                var appUrl     = _config["AppUrl"] ?? "http://localhost:5180";
+                var appUrl = _config["AppUrl"] ?? "http://localhost:5180";
                 var verifyLink = $"{appUrl}/Account/VerifyEmail?token={user.EmailVerificationToken}";
 
                 try { await _emailService.SendVerificationEmailAsync(user.Email, user.FullName, verifyLink); }
@@ -204,11 +204,11 @@ namespace shree_om.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == model.Email);
             if (user != null)
             {
-                user.PasswordResetToken       = Guid.NewGuid().ToString("N");
-                user.PasswordResetTokenExpiry  = DateTime.UtcNow.AddHours(1);
+                user.PasswordResetToken = Guid.NewGuid().ToString("N");
+                user.PasswordResetTokenExpiry = DateTime.UtcNow.AddHours(1);
                 await _context.SaveChangesAsync();
 
-                var appUrl    = _config["AppUrl"] ?? "http://localhost:5180";
+                var appUrl = _config["AppUrl"] ?? "http://localhost:5180";
                 var resetLink = $"{appUrl}/Account/ResetPassword?token={user.PasswordResetToken}&email={Uri.EscapeDataString(user.Email)}";
 
                 try { await _emailService.SendPasswordResetEmailAsync(user.Email, user.FullName, resetLink); }
@@ -258,8 +258,8 @@ namespace shree_om.Controllers
                 return RedirectToAction("ForgotPassword");
             }
 
-            user.PasswordHash          = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
-            user.PasswordResetToken    = null;
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+            user.PasswordResetToken = null;
             user.PasswordResetTokenExpiry = null;
             await _context.SaveChangesAsync();
 
@@ -276,6 +276,16 @@ namespace shree_om.Controllers
             await HttpContext.SignOutAsync("CookieAuth");
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
+        }
+        // ─── DASHBOARD ────────────────────────────────────────────────────────────
+
+        [HttpGet]
+        public IActionResult Dashboard()
+        {
+            if (User.Identity?.IsAuthenticated != true)
+                return RedirectToAction("Login");
+
+            return View();
         }
     }
 }
