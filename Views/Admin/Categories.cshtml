@@ -1,0 +1,79 @@
+@model IEnumerable<shree_om.Models.Category>
+@{
+    ViewData["Title"] = "Manage Categories";
+    Layout = "_AdminLayout";
+}
+
+<div class="mb-6 flex justify-between items-center">
+    <div>
+        <h2 class="text-2xl font-bold text-slate-800">Categories</h2>
+        <p class="text-gray-500 text-sm mt-1">Manage product categories</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Add Category Form -->
+    <div class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+            <h3 class="font-bold text-slate-800 mb-4 border-b border-gray-100 pb-2">Add New Category</h3>
+            <form asp-action="AddCategory" method="post" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
+                    <input type="text" name="name" required class="w-full px-3 py-2 border border-gray-200 rounded-md focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none text-sm" />
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
+                    <textarea name="description" rows="3" class="w-full px-3 py-2 border border-gray-200 rounded-md focus:border-orange-500 focus:ring-1 focus:ring-orange-500 outline-none text-sm"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-orange-500 text-white font-medium py-2 rounded-md hover:bg-orange-600 transition-colors shadow-sm">
+                    Add Category
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Category List -->
+    <div class="lg:col-span-2">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-b border-gray-100 text-sm">
+                            <th class="py-3 px-6 font-semibold text-gray-600">ID</th>
+                            <th class="py-3 px-6 font-semibold text-gray-600">Name</th>
+                            <th class="py-3 px-6 font-semibold text-gray-600">Description</th>
+                            <th class="py-3 px-6 font-semibold text-gray-600 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="4" class="py-8 text-center text-gray-500">No categories found.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var cat in Model)
+                            {
+                                <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                                    <td class="py-3 px-6 text-gray-500">@cat.Id</td>
+                                    <td class="py-3 px-6 font-medium text-slate-800">@cat.Name</td>
+                                    <td class="py-3 px-6 text-gray-500 truncate max-w-xs">@cat.Description</td>
+                                    <td class="py-3 px-6 text-right">
+                                        <form asp-action="DeleteCategory" method="post" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this category?');">
+                                            <input type="hidden" name="id" value="@cat.Id" />
+                                            <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded transition-colors" title="Delete">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

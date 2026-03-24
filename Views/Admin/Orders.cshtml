@@ -1,115 +1,212 @@
 @model IEnumerable<shree_om.Models.Order>
 @{
-    ViewData["Title"] = "Order Management";
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Manage Orders";
+    Layout = "_AdminLayout";
+    var selectedStatus = ViewBag.SelectedStatus as string ?? "All";
 }
 
-<div class="admin-orders">
-    <div class="page-header">
-        <div>
-            <h1>Order Management</h1>
-            <p>Manage customer orders and track fulfillment status.</p>
-        </div>
-        <button class="btn-export">📥 Export Orders</button>
+<div class="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+    <div>
+        <h2 class="text-2xl font-bold text-slate-800">Order Management</h2>
+        <p class="text-gray-500 text-sm mt-1">Manage customer orders and track fulfillment status.</p>
     </div>
+</div>
 
-    <div class="order-filters">
-        <a href="/Admin/Orders?status=All" class="filter-tab @(ViewBag.SelectedStatus == "All" ? "active" : "")">
-            All (@Model.Count())
-        </a>
-        <a href="/Admin/Orders?status=Pending" class="filter-tab @(ViewBag.SelectedStatus == "Pending" ? "active" : "")">
-            Pending (@Model.Count(o => o.Status == "Pending"))
-        </a>
-        <a href="/Admin/Orders?status=Processing" class="filter-tab @(ViewBag.SelectedStatus == "Processing" ? "active" : "")">
-            Processing (@Model.Count(o => o.Status == "Processing"))
-        </a>
-        <a href="/Admin/Orders?status=Shipped" class="filter-tab @(ViewBag.SelectedStatus == "Shipped" ? "active" : "")">
-            Shipped (@Model.Count(o => o.Status == "Shipped"))
-        </a>
-        <a href="/Admin/Orders?status=Delivered" class="filter-tab @(ViewBag.SelectedStatus == "Delivered" ? "active" : "")">
-            Delivered (@Model.Count(o => o.Status == "Delivered"))
-        </a>
-    </div>
+<!-- Filter Tabs -->
+<div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+    <a asp-action="Orders" asp-route-status="All" class="px-4 py-2 rounded-lg font-medium transition-colors border @(selectedStatus == "All" ? "bg-orange-500 text-white border-orange-500" : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50")">
+        All
+    </a>
+    <a asp-action="Orders" asp-route-status="Pending" class="px-4 py-2 rounded-lg font-medium transition-colors border @(selectedStatus == "Pending" ? "bg-orange-500 text-white border-orange-500" : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50")">
+        Pending
+    </a>
+    <a asp-action="Orders" asp-route-status="Processing" class="px-4 py-2 rounded-lg font-medium transition-colors border @(selectedStatus == "Processing" ? "bg-orange-500 text-white border-orange-500" : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50")">
+        Processing
+    </a>
+    <a asp-action="Orders" asp-route-status="Shipped" class="px-4 py-2 rounded-lg font-medium transition-colors border @(selectedStatus == "Shipped" ? "bg-orange-500 text-white border-orange-500" : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50")">
+        Shipped
+    </a>
+    <a asp-action="Orders" asp-route-status="Delivered" class="px-4 py-2 rounded-lg font-medium transition-colors border @(selectedStatus == "Delivered" ? "bg-orange-500 text-white border-orange-500" : "bg-white text-gray-700 border-gray-200 hover:bg-gray-50")">
+        Delivered
+    </a>
+</div>
 
-    <div class="orders-table">
-        <table>
-            <thead>
+<div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-200">
                 <tr>
-                    <th>ORDER #</th>
-                    <th>CUSTOMER</th>
-                    <th>DATE</th>
-                    <th>ITEMS</th>
-                    <th>TOTAL</th>
-                    <th>STATUS</th>
-                    <th>ACTIONS</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Order #</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Customer</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Items</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach (var order in Model)
+            <tbody class="divide-y divide-gray-200">
+                @if (!Model.Any())
                 {
                     <tr>
-                        <td>@order.OrderNumber</td>
-                        <td>@order.CustomerName</td>
-                        <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
-                        <td>@order.ItemCount</td>
-                        <td>₹@order.TotalAmount</td>
-                        <td>
-                            <select class="status-dropdown" onchange="updateStatus(@order.Id, this.value)">
-                                @if (order.Status == "Pending")
-                                {
-                                    <option value="Pending" selected>Pending</option>
-                                }
-                                else
-                                {
-                                    <option value="Pending">Pending</option>
-                                }
-                                @if (order.Status == "Processing")
-                                {
-                                    <option value="Processing" selected>Processing</option>
-                                }
-                                else
-                                {
-                                    <option value="Processing">Processing</option>
-                                }
-                                @if (order.Status == "Shipped")
-                                {
-                                    <option value="Shipped" selected>Shipped</option>
-                                }
-                                else
-                                {
-                                    <option value="Shipped">Shipped</option>
-                                }
-                                @if (order.Status == "Delivered")
-                                {
-                                    <option value="Delivered" selected>Delivered</option>
-                                }
-                                else
-                                {
-                                    <option value="Delivered">Delivered</option>
-                                }
-                            </select>
-                        </td>
-                        <td class="actions">
-                            <button class="btn-icon">👁️</button>
-                            <button class="btn-icon">📥</button>
+                        <td colspan="7" class="py-16 text-center text-gray-500">
+                            <i class="fa-solid fa-folder-open text-4xl text-gray-300 mb-3 block"></i>
+                            No orders found matching this tab.
                         </td>
                     </tr>
+                }
+                else
+                {
+                    foreach (var order in Model)
+                    {
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-semibold text-gray-900">@order.OrderNumber.Split('-').Last().ToUpper()</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-gray-900">@(string.IsNullOrEmpty(order.CustomerName) ? "Guest" : order.CustomerName)</p>
+                                <p class="text-xs text-gray-500">@order.CustomerEmail</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-gray-600">@order.OrderDate.ToShortDateString()</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-sm text-gray-900">@(order.OrderItems?.Count ?? order.ItemCount)</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <p class="text-sm font-medium text-gray-900">₹@order.TotalAmount.ToString("N0")</p>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium
+                                     @(order.Status == "Delivered" ? "bg-green-50 text-green-700" : 
+                                       order.Status == "Pending" ? "bg-gray-100 text-gray-700" : 
+                                       order.Status == "Shipped" ? "bg-blue-50 text-blue-700" : 
+                                       "bg-yellow-50 text-yellow-700")">
+                                    @order.Status
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    <form asp-action="UpdateOrderStatus" method="post" class="inline-block relative">
+                                        <input type="hidden" name="id" value="@order.Id" />
+                                        <select name="status" onchange="this.form.submit()" class="text-xs border border-gray-300 rounded p-1 max-w-[100px] bg-white cursor-pointer hover:bg-gray-50 focus:outline-none focus:ring-1 focus:ring-orange-500 focus:border-orange-500">
+                                            @foreach (var s in new[] { "Pending", "Processing", "Shipped", "Delivered" })
+                                            {
+                                                if (order.Status == s) {
+                                                    <option value="@s" selected>@s</option>
+                                                } else {
+                                                    <option value="@s">@s</option>
+                                                }
+                                            }
+                                        </select>
+                                    </form>
+                                    
+                                    <button class="p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded transition-colors block" title="View Details" onclick="openOrderModal('modal-@order.Id')">
+                                        <i class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
     </div>
-
-    <div class="back-link">
-        <a href="/Admin/Dashboard">← Back to Dashboard</a>
-    </div>
 </div>
 
-<script>
-function updateStatus(orderId, status) {
-    fetch('/Admin/UpdateOrderStatus', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `id=${orderId}&status=${status}`
-    }).then(() => location.reload());
+<!-- Modal Blocks -->
+@foreach (var order in Model)
+{
+    <div id="modal-@order.Id" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-6 border-b border-gray-100 sticky top-0 bg-white z-10">
+          <h3 class="text-xl font-bold text-gray-900">
+            Order Details <span class="text-sm font-normal text-gray-500 ml-2">#@order.OrderNumber.Split('-').Last().ToUpper()</span>
+          </h3>
+          <button onclick="closeOrderModal('modal-@order.Id')" class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors">
+            <i class="fa-solid fa-xmark w-5 h-5 text-lg"></i>
+          </button>
+        </div>
+        
+        <div class="p-6 space-y-6">
+          <!-- Customer & Shipping Info -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-gray-900 mb-2">Customer Details</h4>
+              <p class="text-sm text-gray-600">Name: <span class="font-medium text-gray-900">@(string.IsNullOrEmpty(order.CustomerName) ? "Guest" : order.CustomerName)</span></p>
+              <p class="text-sm text-gray-600">Email: <span class="font-medium text-gray-900">@(string.IsNullOrEmpty(order.CustomerEmail) ? "N/A" : order.CustomerEmail)</span></p>
+              <p class="text-sm text-gray-600">Phone: <span class="font-medium text-gray-900">@(string.IsNullOrEmpty(order.PhoneNo) ? "N/A" : order.PhoneNo)</span></p>
+            </div>
+            
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h4 class="font-semibold text-gray-900 mb-2">Shipping Address</h4>
+              <p class="text-sm text-gray-600 font-medium">@order.ShippingAddress</p>
+              <p class="text-sm text-gray-600">@order.City, @order.PostalCode</p>
+              <p class="text-sm text-gray-600">@order.Country</p>
+            </div>
+          </div>
+
+          <!-- Order Items -->
+          <div>
+            <h4 class="font-semibold text-gray-900 mb-3">Order Items</h4>
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
+              <table class="w-full text-left text-sm whitespace-nowrap">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th class="px-4 py-2 font-medium text-gray-600">Product</th>
+                    <th class="px-4 py-2 font-medium text-gray-600">Qty</th>
+                    <th class="px-4 py-2 font-medium text-gray-600 text-right">Price</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  @if (order.OrderItems != null && order.OrderItems.Any())
+                  {
+                      foreach (var item in order.OrderItems)
+                      {
+                        <tr>
+                          <td class="px-4 py-3 text-gray-900 max-w-[200px] truncate text-wrap">@item.Name</td>
+                          <td class="px-4 py-3 text-gray-600">@item.Quantity</td>
+                          <td class="px-4 py-3 text-gray-900 text-right">₹@item.Price.ToString("N0")</td>
+                        </tr>
+                      }
+                  }
+                  else
+                  {
+                      <tr><td colspan="3" class="px-4 py-3 text-center text-gray-500 italic">No line items available.</td></tr>
+                  }
+                </tbody>
+                <tfoot class="bg-gray-50 border-t border-gray-200">
+                  <tr>
+                    <th colspan="2" class="px-4 py-3 text-right font-medium text-gray-700">Total</th>
+                    <th class="px-4 py-3 text-right text-lg font-bold text-orange-600">₹@order.TotalAmount.ToString("N0")</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 }
+
+<script>
+    function openOrderModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            modal.onclick = function() { closeOrderModal(modalId); };
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    function closeOrderModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
+        }
+    }
 </script>

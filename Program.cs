@@ -50,4 +50,26 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// ─── SEED DEFAULT ADMIN ────────────────────────────────────────────────────
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<shree_om.Data.ApplicationDbContext>();
+
+    var adminEmail = "admintest@gmail.com";
+    if (!context.Users.Any(u => u.Email == adminEmail))
+    {
+        var adminUser = new shree_om.Models.User
+        {
+            FullName = "Admin Test",
+            Email = adminEmail,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@321"),
+            Role = "Admin",
+            IsEmailVerified = true,
+            CreatedAt = DateTime.UtcNow
+        };
+        context.Users.Add(adminUser);
+        context.SaveChanges();
+    }
+}
+
 app.Run();

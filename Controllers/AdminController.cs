@@ -6,6 +6,7 @@ using shree_om.Models;
 
 namespace shree_om.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -15,7 +16,8 @@ namespace shree_om.Controllers
             _context = context;
         }
 
-        // Dashboard
+        // ─── DASHBOARD ────────────────────────────────────────────────────────────
+
         public async Task<IActionResult> Dashboard()
         {
             var totalSales = await _context.Orders.SumAsync(o => o.TotalAmount);
@@ -43,7 +45,42 @@ namespace shree_om.Controllers
             return View();
         }
 
-        // Product Management
+        // ─── CATEGORY MANAGEMENT ─────────────────────────────────────────────────
+
+        public async Task<IActionResult> Categories()
+        {
+            var categories = await _context.Categories.ToListAsync();
+            return View(categories);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddCategory(string name, string? description)
+        {
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                var cat = new Category { Name = name, Description = description ?? "" };
+                _context.Categories.Add(cat);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Category added successfully!";
+            }
+            return RedirectToAction(nameof(Categories));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var cat = await _context.Categories.FindAsync(id);
+            if (cat != null)
+            {
+                _context.Categories.Remove(cat);
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Category deleted successfully!";
+            }
+            return RedirectToAction(nameof(Categories));
+        }
+
+        // ─── PRODUCT MANAGEMENT ───────────────────────────────────────────────────
+
         public async Task<IActionResult> Products()
         {
             var products = await _context.Products.Include(p => p.Category).ToListAsync();
@@ -57,10 +94,32 @@ namespace shree_om.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProduct(Product product)
+        public async Task<IActionResult> AddProduct(Product product, IFormFile? imageFile)
         {
+            ModelState.Remove("ImageUrl");
+            ModelState.Remove("Description");
+
             if (ModelState.IsValid)
             {
+                if (product.OriginalPrice == 0) product.OriginalPrice = product.Price;
+
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "products");
+                    if (!Directory.Exists(uploadsDir)) Directory.CreateDirectory(uploadsDir);
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                    var filePath = Path.Combine(uploadsDir, fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await imageFile.CopyToAsync(stream);
+                    }
+                    product.ImageUrl = "/images/products/" + fileName;
+                }
+                else if (string.IsNullOrWhiteSpace(product.ImageUrl))
+                {
+                    product.ImageUrl = "/images/products/dummy.jpg";
+                }
+
                 _context.Products.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Products));
@@ -78,11 +137,45 @@ namespace shree_om.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditProduct(Product product)
+        public async Task<IActionResult> EditProduct(Product product, IFormFile? imageFile)
         {
-            if (ModelState.IsValid)
+            ModelState.Remove("ImageUrl");
+            ModelState.Remove("Description");
+
+            var existingProduct = await _context.Products.FindAsync(product.Id);
+            if (existingProduct != null && ModelState.IsValid)
             {
-                _context.Products.Update(product);
+                existingProduct.Name = product.Name ?? existingProduct.Name;
+                existingProduct.CategoryId = product.CategoryId;
+                existingProduct.Stock = product.Stock;
+                existingProduct.Price = product.Price;
+                existingProduct.OriginalPrice = product.Price;
+
+                if (imageFile != null && imageFile.Length > 0)
+                {
+                    var uploadsDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "products");
+                    if (!Directory.Exists(uploadsDir)) Directory.CreateDirectory(uploadsDir);
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                    var filePath = Path.Combine(uploadsDir, fileName);
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await imageFile.CopyToAsync(stream);
+                    }
+                    existingProduct.ImageUrl = "/images/products/" + fileName;
+                }
+                else if (!string.IsNullOrWhiteSpace(product.ImageUrl))
+                {
+                    existingProduct.ImageUrl = product.ImageUrl;
+                }
+
+                if (!string.IsNullOrWhiteSpace(product.Description))
+                {
+                    existingProduct.Description = product.Description;
+                }
+
+                existingProduct.Material = product.Material ?? existingProduct.Material;
+                existingProduct.Finish = product.Finish ?? existingProduct.Finish;
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Products));
             }
@@ -102,7 +195,8 @@ namespace shree_om.Controllers
             return RedirectToAction(nameof(Products));
         }
 
-        // User Management
+        // ─── USER MANAGEMENT ─────────────────────────────────────────────────────
+
         public async Task<IActionResult> Users()
         {
             var users = await _context.Users.ToListAsync();
@@ -165,13 +259,14 @@ namespace shree_om.Controllers
             return RedirectToAction(nameof(Users));
         }
 
-        // Order Management
+        // ─── ORDER MANAGEMENT ────────────────────────────────────────────────────
+
         public async Task<IActionResult> Orders(string status = "All")
         {
-            var orders = status == "All" 
-                ? await _context.Orders.OrderByDescending(o => o.OrderDate).ToListAsync()
-                : await _context.Orders.Where(o => o.Status == status).OrderByDescending(o => o.OrderDate).ToListAsync();
-            
+            var orders = status == "All"
+                ? await _context.Orders.Include(o => o.OrderItems).OrderByDescending(o => o.OrderDate).ToListAsync()
+                : await _context.Orders.Include(o => o.OrderItems).Where(o => o.Status == status).OrderByDescending(o => o.OrderDate).ToListAsync();
+
             ViewBag.SelectedStatus = status;
             return View(orders);
         }

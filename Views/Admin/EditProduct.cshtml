@@ -1,93 +1,97 @@
 @model shree_om.Models.Product
 @{
     ViewData["Title"] = "Edit Product";
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    Layout = "_AdminLayout";
+    var categories = ViewBag.Categories as IEnumerable<shree_om.Models.Category>;
 }
 
-<div class="admin-form">
-    <h1>Edit Product</h1>
+<div class="min-h-screen bg-gray-50 -m-8 p-8 font-sans">
+  <div class="max-w-4xl mx-auto px-6 py-8">
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold text-gray-900">Edit Product</h1>
+    </div>
 
-    <form method="post" action="/Admin/EditProduct">
-        <input type="hidden" name="Id" value="@Model.Id">
-        <input type="hidden" name="CreatedAt" value="@Model.CreatedAt">
+    <!-- Form -->
+    <form asp-action="EditProduct" method="post" enctype="multipart/form-data" class="bg-white rounded-lg border border-gray-200 p-6">
+      <input type="hidden" asp-for="Id" />
+      <input type="hidden" asp-for="CreatedAt" />
+      <input type="hidden" asp-for="Rating" />
+      <input type="hidden" asp-for="ReviewCount" />
+        
+      <div class="grid grid-cols-2 gap-6">
+        
+        <!-- Product Name -->
+        <div class="col-span-2 md:col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+          <input type="text" asp-for="Name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 bg-white" />
+        </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label>Product Name</label>
-                <input type="text" name="Name" value="@Model.Name" required>
-            </div>
-            <div class="form-group">
-                <label>SKU</label>
-                <input type="text" value="SH-DH-001" readonly>
+        <!-- Category -->
+        <div class="col-span-2 md:col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+          <select asp-for="CategoryId" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 bg-white appearance-none">
+            <option value="">Select Category</option>
+            @if(categories != null)
+            {
+                foreach(var cat in categories)
+                {
+                    <option value="@cat.Id">@cat.Name</option>
+                }
+            }
+          </select>
+        </div>
+
+        <!-- Stock -->
+        <div class="col-span-2 md:col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Stock</label>
+          <input type="number" asp-for="Stock" min="0" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 bg-white" />
+        </div>
+
+        <!-- Price -->
+        <div class="col-span-2 md:col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Price (₹)</label>
+          <input type="number" asp-for="Price" step="0.01" min="0" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 bg-white" />
+        </div>
+
+        <!-- Product Image (File input) -->
+        <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
+            <div class="flex flex-col gap-2">
+                <input type="file" name="imageFile" accept="image/*" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 bg-white" />
+                <input type="hidden" asp-for="ImageUrl" />
+                <div class="text-xs text-gray-500">Leave empty to keep existing image.</div>
             </div>
         </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label>Category</label>
-                <select name="CategoryId" required>
-                    @foreach (var cat in ViewBag.Categories)
-                    {
-                        if (cat.Id == Model.CategoryId)
-                        {
-                            <option value="@cat.Id" selected>@cat.Name</option>
-                        }
-                        else
-                        {
-                            <option value="@cat.Id">@cat.Name</option>
-                        }
-                    }
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Stock</label>
-                <input type="number" name="Stock" value="@Model.Stock" required>
-            </div>
+        <!-- Full Description -->
+        <div class="col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Full Description</label>
+          <textarea asp-for="Description" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none text-gray-900 bg-white"></textarea>
         </div>
 
-        <div class="form-row">
-            <div class="form-group">
-                <label>Price (₹)</label>
-                <input type="number" name="Price" value="@Model.Price" step="0.01" required>
-            </div>
-            <div class="form-group">
-                <label>Sale Price (₹) <span>(Optional)</span></label>
-                <input type="number" name="OriginalPrice" value="@Model.OriginalPrice" step="0.01">
-            </div>
+        <!-- Material -->
+        <div class="col-span-2 md:col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Material</label>
+          <input type="text" asp-for="Material" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 bg-white" />
         </div>
 
-        <div class="form-group">
-            <label>Image URL</label>
-            <div class="image-input">
-                <input type="text" name="ImageUrl" value="@Model.ImageUrl">
-                <button type="button" class="btn-select">Select</button>
-            </div>
+        <!-- Finish -->
+        <div class="col-span-2 md:col-span-1">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Finish</label>
+          <input type="text" asp-for="Finish" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-gray-900 bg-white" />
         </div>
+      </div>
 
-        <div class="form-group">
-            <label>Short Description</label>
-            <input type="text" value="@Model.Description">
-        </div>
-
-        <div class="form-group">
-            <label>Full Description</label>
-            <textarea name="Description" rows="4">@Model.Description</textarea>
-        </div>
-
-        <div class="form-row">
-            <div class="form-group">
-                <label>Material</label>
-                <input type="text" value="Stainless Steel 304">
-            </div>
-            <div class="form-group">
-                <label>Finish</label>
-                <input type="text" value="Chrome">
-            </div>
-        </div>
-
-        <div class="form-actions">
-            <a href="/Admin/Products" class="btn-cancel">Cancel</a>
-            <button type="submit" class="btn-primary">Update Product</button>
-        </div>
+      <!-- Action Buttons -->
+      <div class="flex justify-end gap-3 mt-6 pt-6 border-t border-gray-200">
+        <a asp-action="Products" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition-colors bg-white">
+          Cancel
+        </a>
+        <button type="submit" class="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-medium transition-colors">
+          Update Product
+        </button>
+      </div>
     </form>
+  </div>
 </div>

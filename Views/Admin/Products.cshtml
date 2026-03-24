@@ -1,56 +1,83 @@
 @model IEnumerable<shree_om.Models.Product>
 @{
-    ViewData["Title"] = "Product Management";
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Manage Products";
+    Layout = "_AdminLayout";
 }
 
-<div class="admin-products">
-    <div class="page-header">
-        <div>
-            <h1>Product Management</h1>
-            <p>Manage your product inventory</p>
-        </div>
-        <a href="/Admin/AddProduct" class="btn-primary">+ Add Product</a>
+<div class="mb-6 flex justify-between items-center">
+    <div>
+        <h2 class="text-2xl font-bold text-slate-800">Products</h2>
+        <p class="text-gray-500 text-sm mt-1">Manage your inventory</p>
     </div>
-
-    <div class="search-bar">
-        <input type="text" placeholder="Search products..." id="searchProducts">
+    <div class="flex gap-3">
+        <a asp-action="AddProduct" class="bg-orange-500 text-white px-4 py-2 rounded-md font-medium hover:bg-orange-600 transition-colors shadow-sm flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Add Product
+        </a>
     </div>
+</div>
 
-    <div class="products-table">
-        <table>
+<div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
             <thead>
-                <tr>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
-                    <th>Stock</th>
-                    <th>Actions</th>
+                <tr class="bg-gray-50 border-b border-gray-100 text-xs uppercase tracking-wider text-gray-500 font-semibold">
+                    <th class="py-3 px-6 text-center w-16">Image</th>
+                    <th class="py-3 px-6">Name</th>
+                    <th class="py-3 px-6">Category</th>
+                    <th class="py-3 px-6 text-right">Price</th>
+                    <th class="py-3 px-6 text-center">Stock</th>
+                    <th class="py-3 px-6 text-center">Status</th>
+                    <th class="py-3 px-6 text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                @foreach (var product in Model)
+            <tbody class="text-sm">
+                @if (!Model.Any())
                 {
                     <tr>
-                        <td><img src="@product.ImageUrl" alt="@product.Name" class="product-thumb"></td>
-                        <td>@product.Name</td>
-                        <td>@product.Category?.Name</td>
-                        <td>₹@product.Price</td>
-                        <td>@product.Stock</td>
-                        <td class="actions">
-                            <a href="/Admin/EditProduct/@product.Id" class="btn-edit">✏️</a>
-                            <form method="post" action="/Admin/DeleteProduct/@product.Id" style="display:inline;">
-                                <button type="submit" class="btn-delete" onclick="return confirm('Delete this product?')">🗑️</button>
-                            </form>
-                        </td>
+                        <td colspan="7" class="py-10 text-center text-gray-500">No products found. Add one to get started!</td>
                     </tr>
+                }
+                else
+                {
+                    @foreach (var p in Model)
+                    {
+                        <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                            <td class="py-3 px-6">
+                                <div class="w-10 h-10 bg-gray-100 rounded mx-auto flex items-center justify-center text-gray-400">
+                                    @if (!string.IsNullOrEmpty(p.ImageUrl)){ <img src="@p.ImageUrl" class="w-full h-full object-cover rounded" /> }
+                                    else{ <i class="fa-solid fa-wrench text-xs"></i> }
+                                </div>
+                            </td>
+                            <td class="py-3 px-6">
+                                <span class="font-medium text-slate-800 line-clamp-1">@p.Name</span>
+                                @if (p.IsFeatured){ <span class="text-[10px] bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded ml-2 uppercase font-bold tracking-wider inline-block">Featured</span> }
+                            </td>
+                            <td class="py-3 px-6 text-gray-600">@(p.Category?.Name ?? "N/A")</td>
+                            <td class="py-3 px-6 text-right font-medium text-slate-800">₹@p.Price.ToString("N0")</td>
+                            <td class="py-3 px-6 text-center">
+                                <span class="font-semibold @(p.Stock > 10 ? "text-green-600" : p.Stock > 0 ? "text-amber-500" : "text-red-500")">
+                                    @p.Stock
+                                </span>
+                            </td>
+                            <td class="py-3 px-6 text-center">
+                                @if (p.Stock > 0){ <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-700">In Stock</span> }
+                                else{ <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-700">Out of Stock</span> }
+                            </td>
+                            <td class="py-3 px-6 text-right space-x-2">
+                                <a asp-action="EditProduct" asp-route-id="@p.Id" class="text-blue-500 hover:text-blue-700 hover:bg-blue-50 p-1.5 rounded transition-colors inline-block" title="Edit">
+                                    <i class="fa-solid fa-pen"></i>
+                                </a>
+                                <form asp-action="DeleteProduct" method="post" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                    <input type="hidden" name="id" value="@p.Id" />
+                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded transition-colors" title="Delete">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
-    </div>
-
-    <div class="back-link">
-        <a href="/Admin/Dashboard">← Back to Dashboard</a>
     </div>
 </div>
