@@ -1,0 +1,297 @@
+@{
+    ViewData["Title"] = "My Dashboard";
+    Layout = "_Layout";
+}
+
+<style>
+    .dash-bg {
+        background-color: #F9FAFB;
+        padding: 40px 20px 80px;
+        min-height: calc(100vh - 200px);
+    }
+    .dash-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    .dash-page-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 24px;
+    }
+    .dash-grid {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 24px;
+    }
+    
+    /* Sidebar styling */
+    .dash-sidebar {
+        background: #fff;
+        border: 1px solid #E5E7EB;
+        border-radius: 12px;
+        padding: 32px 24px 24px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        display: flex;
+        flex-direction: column;
+    }
+    .user-avatar-wrap {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+    .user-avatar {
+        width: 80px;
+        height: 80px;
+        background: #F97316;
+        color: #fff;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+    .user-name {
+        font-weight: 700;
+        font-size: 16px;
+        color: #111827;
+        margin-bottom: 2px;
+    }
+    .user-email {
+        font-size: 13px;
+        color: #6B7280;
+    }
+    
+    .dash-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    .dash-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #4B5563;
+        transition: 0.2s all;
+        cursor: pointer;
+        text-decoration: none;
+    }
+    .dash-menu-link i {
+        font-size: 16px;
+        color: #9CA3AF;
+        width: 20px;
+        text-align: center;
+    }
+    .dash-menu-link:hover {
+        background: #FFF7ED;
+        color: #F97316;
+    }
+    .dash-menu-link:hover i {
+        color: #F97316;
+    }
+    
+    .dash-menu-link.active {
+        background: #F97316;
+        color: #fff;
+    }
+    .dash-menu-link.active i {
+        color: #fff;
+    }
+    
+    .dash-menu-link.logout {
+        color: #EF4444;
+        margin-top: 10px;
+    }
+    .dash-menu-link.logout i {
+        color: #EF4444;
+    }
+    
+    /* Main section styling */
+    .dash-main {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+    
+    .welcome-card h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 4px;
+    }
+    .welcome-card p {
+        color: #6B7280;
+        font-size: 15px;
+    }
+    
+    /* Stats grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+    .stat-card {
+        background: #fff;
+        border: 1px solid #E5E7EB;
+        border-radius: 12px;
+        padding: 24px;
+        text-align: left;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .stat-val {
+        font-size: 32px;
+        font-weight: 700;
+        color: #F97316;
+        line-height: 1;
+        margin-bottom: 12px;
+    }
+    .stat-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #9CA3AF;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+    
+    /* Recent Orders */
+    .recent-orders-card {
+        background: #fff;
+        border: 1px solid #E5E7EB;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card-header {
+        padding: 18px 24px;
+        border-bottom: 1px solid #E5E7EB;
+        font-size: 14px;
+        font-weight: 700;
+        color: #111827;
+    }
+    
+    .empty-state {
+        padding: 60px 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .empty-state .icon-wrap {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #F3F4F6;
+        color: #9CA3AF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 16px;
+    }
+    .empty-state p {
+        color: #6B7280;
+        font-size: 15px;
+        font-weight: 500;
+        margin-bottom: 24px;
+    }
+    .btn-shop {
+        background: #F97316;
+        color: #fff;
+        padding: 10px 28px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: 0.2s all;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn-shop:hover {
+        background: #EA580C;
+    }
+</style>
+
+<div class="dash-bg">
+    <div class="dash-container">
+        <h1 class="dash-page-title">My Dashboard</h1>
+
+        <div class="dash-grid">
+            <!-- Sidebar -->
+            <aside class="dash-sidebar">
+                <div class="user-avatar-wrap">
+                    <div class="user-avatar">
+                        @ViewData["UserInitial"] ?? "y"
+                    </div>
+                    <div class="user-name">@User.Identity?.Name ?? "yashmakwana2275"</div>
+                    <div class="user-email">@User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "yashmakwana2275@gmail.com"</div>
+                </div>
+
+                <nav class="dash-menu">
+                    <a asp-controller="Account" asp-action="Dashboard" class="dash-menu-link active">
+                        <i class="fa-solid fa-border-all"></i> Dashboard
+                    </a>
+                    <a href="#" class="dash-menu-link">
+                        <i class="fa-solid fa-box"></i> My Orders
+                    </a>
+                    <a href="#" class="dash-menu-link">
+                        <i class="fa-regular fa-heart"></i> Wishlist
+                    </a>
+                    <a asp-controller="Account" asp-action="Profile" class="dash-menu-link">
+                        <i class="fa-regular fa-user"></i> Profile
+                    </a>
+                    <a asp-controller="Account" asp-action="ForgotPassword" class="dash-menu-link">
+                        <i class="fa-solid fa-key"></i> Reset Password
+                    </a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" style="margin:0;">
+                         <button type="submit" class="dash-menu-link logout" style="width:100%; border:none; background:none; text-align:left;">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </form>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="dash-main">
+                <div class="welcome-card">
+                    <h2>Hello, @User.Identity?.Name ?? "yashmakwana2275"!</h2>
+                    <p>Welcome back to your dashboard</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-val">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val">0</div>
+                        <div class="stat-label">Pending Orders</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val">0</div>
+                        <div class="stat-label">Wishlist Items</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val">0</div>
+                        <div class="stat-label">Reward Points</div>
+                    </div>
+                </div>
+
+                <div class="recent-orders-card">
+                    <div class="card-header">Recent Orders</div>
+                    <div class="empty-state">
+                        <div class="icon-wrap">
+                            <i class="fa-solid fa-box-open"></i>
+                        </div>
+                        <p>No orders yet</p>
+                        <a asp-controller="Products" asp-action="Index" class="btn-shop">Start Shopping</a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>

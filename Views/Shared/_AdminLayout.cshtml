@@ -3,38 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Shree Om Hardware Admin</title>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - Shree-Om Admin</title>
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
 </head>
 <body class="admin-body">
-    <header class="admin-header">
-        <div class="header-content">
-            <div class="logo">
-                <span class="logo-icon">SO</span>
-                <span class="logo-text">Shree Om<br><small>Hardware</small></span>
-            </div>
-            <div class="header-search">
-                <input type="text" placeholder="Search for door handles, locks, hinges...">
-            </div>
-            <nav class="header-nav">
-                <a href="/">Home</a>
-                <a href="/Products">Products</a>
-                <a href="/About">About</a>
-                <a href="/Contact">Contact</a>
-            </nav>
-            <div class="header-user">
-                <span>👤</span>
-            </div>
+    @if (TempData["Success"] != null)
+    {
+        <div class="admin-wrapper" style="padding-bottom:0">
+            <div class="admin-alert-success">@TempData["Success"]</div>
         </div>
-       
-    </header>
-
-    <main class="admin-main">
-        @RenderBody()
-    </main>
-
-    <script src="~/js/site.js" asp-append-version="true"></script>
+    }
+    @RenderBody()
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
